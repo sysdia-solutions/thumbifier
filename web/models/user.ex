@@ -15,6 +15,12 @@ defmodule Thumbifier.User do
   @required_fields ~w(email api_token usage_limit usage_counter usage_reset_at total_usage)
   @optional_fields ~w()
 
+  def find(%{email: email, api_token: api_token}) do
+    query = from u in Thumbifier.User,
+            where: u.email == ^email and u.api_token == ^hash(api_token)
+    Thumbifier.Repo.one(query)
+  end
+
   def find(%{email: email}) do
     query = from u in Thumbifier.User,
             where: u.email == ^email
@@ -30,5 +36,10 @@ defmodule Thumbifier.User do
   def changeset(model, params \\ nil) do
     model
     |> cast(params, @required_fields, @optional_fields)
+  end
+
+  def hash(string) do
+    :crypto.hash(:sha512, string)
+    |> Base.encode16
   end
 end
