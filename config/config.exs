@@ -14,6 +14,8 @@ config :thumbifier, Thumbifier.Endpoint,
   pubsub: [name: Thumbifier.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :phoenix, filter_parameters: ["api_token", "api_grant"]
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
