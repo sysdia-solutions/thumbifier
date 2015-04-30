@@ -33,6 +33,7 @@ defmodule Thumbifier.Mixfile do
      {:postgrex, ">= 0.0.0"},
      {:phoenix_live_reload, "~> 0.3"},
      {:exrm, "~> 0.15.3"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:timex, "~> 0.13.4"}]
   end
 end
