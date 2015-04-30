@@ -18,8 +18,8 @@ defmodule Thumbifier.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", Thumbifier do
-  #   pipe_through :api
-  # end
+  scope "/users", Thumbifier do
+    pipe_through :api
+    get "/:email", UserController, :show
+  end
 end
