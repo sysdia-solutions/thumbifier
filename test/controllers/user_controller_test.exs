@@ -9,7 +9,7 @@ defmodule UserControllerTest do
         api_token: token |> Thumbifier.User.hash,
         usage_limit: 0,
         usage_counter: 0,
-        usage_reset_at: nil,
+        usage_reset_at: Thumbifier.Util.Time.ecto_now,
         total_usage: 0
       }
       |> Thumbifier.Repo.insert
@@ -62,12 +62,13 @@ defmodule UserControllerTest do
   end
 
   test "/show returns a user when a valid email and api_token are supplied", %{user: user, token: token} do
-    user_as_json = user |> Poison.encode!
-
     response = conn(:get, "/users/#{user.email}")
                |> add_auth_header(token)
                |> send_request
     assert response.status == 200
+
+    #Update the initial user's api_grant as it will always be random from the response
+    user_as_json = %{ user | api_token: Map.get(response.resp_body |> Poison.decode!, "api_grant") } |> Poison.encode!
     assert response.resp_body == user_as_json
   end
 end

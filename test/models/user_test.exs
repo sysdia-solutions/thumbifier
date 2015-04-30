@@ -9,7 +9,7 @@ defmodule UserTest do
         api_token: token |> Thumbifier.User.hash,
         usage_limit: 0,
         usage_counter: 0,
-        usage_reset_at: nil,
+        usage_reset_at: Thumbifier.Util.Time.ecto_now,
         total_usage: 0
       }
       |> Thumbifier.Repo.insert
