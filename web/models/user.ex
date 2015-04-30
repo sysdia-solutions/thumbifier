@@ -6,7 +6,7 @@ defmodule Thumbifier.User do
     field :api_token, :string
     field :usage_limit, :integer, default: 10
     field :usage_counter, :integer, default: 0
-    field :usage_reset_at, Ecto.DateTime, default: Thumbifier.Util.Time.ecto_now
+    field :usage_reset_at, Ecto.DateTime
     field :total_usage, :integer, default: 0
 
     timestamps
@@ -27,6 +27,22 @@ defmodule Thumbifier.User do
     Thumbifier.Repo.one(query)
   end
 
+  def new(%{email: email}) do
+    api_token = Ecto.UUID.generate
+    usage_reset_at = Thumbifier.Util.Time.ecto_now
+    new_user = %{
+                 %Thumbifier.User{} |
+                 email: email,
+                 api_token: api_token
+                            |> hash,
+                 usage_reset_at: usage_reset_at
+                }
+                |> Map.from_struct
+
+    changeset = Thumbifier.User.changeset(%Thumbifier.User{}, new_user)
+    persist(changeset.valid?, changeset, :insert, %{email: email, api_token: api_token})
+  end
+
   @doc """
   Creates a changeset based on the `model` and `params`.
 
@@ -36,10 +52,21 @@ defmodule Thumbifier.User do
   def changeset(model, params \\ nil) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_format(:email, ~r/@/)
+    |> validate_unique(:email, on: Thumbifier.Repo)
   end
 
   def hash(string) do
     :crypto.hash(:sha512, string)
     |> Base.encode16
+  end
+
+  defp persist(false, changeset, _type, _options) do
+    %{error: changeset.errors}
+  end
+
+  defp persist(true, changeset, :insert, options) do
+    Thumbifier.Repo.insert(changeset)
+    %{email: options.email, api_token: options.api_token}
   end
 end
