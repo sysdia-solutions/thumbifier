@@ -9,6 +9,7 @@ defmodule Thumbifier.UserController do
   end
 
   defp show_response(user = %Thumbifier.User{}, conn, _email) do
+    user = Thumbifier.User.generate_grant(user)
     conn
     |> render(user: user)
   end

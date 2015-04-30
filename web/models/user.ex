@@ -29,6 +29,14 @@ defmodule Thumbifier.User do
   end
 
   @doc """
+  Generate an `api_grant` and save it against the given `user`
+  """
+  def generate_grant(user = %Thumbifier.User{}) do
+    update_with = %{ user | api_grant: Ecto.UUID.generate }
+    update(user, update_with)
+  end
+
+  @doc """
   Creates a changeset based on the `model` and `params`.
 
   If `params` are nil, an invalid changeset is returned
@@ -42,5 +50,19 @@ defmodule Thumbifier.User do
   def hash(string) do
     :crypto.hash(:sha512, string)
     |> Base.encode16
+  end
+
+  defp update(user = %Thumbifier.User{}, update_with = %Thumbifier.User{}) do
+    changeset = Thumbifier.User.changeset(user, update_with |> Map.from_struct)
+    persist(changeset.valid?, changeset)
+  end
+
+  defp persist(true, changeset) do
+    Thumbifier.Repo.update(changeset)
+    find(%{email: changeset.changes.email})
+  end
+
+  defp persist(false, _changeset) do
+    throw("Not a valid changeset")
   end
 end
