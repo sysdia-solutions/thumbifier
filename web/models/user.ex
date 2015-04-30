@@ -4,10 +4,10 @@ defmodule Thumbifier.User do
   schema "users" do
     field :email, :string
     field :api_token, :string
-    field :api_grant, :string
+    field :api_grant, :string, default: ""
     field :usage_limit, :integer, default: 1
     field :usage_counter, :integer, default: 0
-    field :usage_reset_at, Ecto.DateTime
+    field :usage_reset_at, Ecto.DateTime, default: Ecto.DateTime.local()
     field :total_usage, :integer, default: 0
 
     timestamps
@@ -28,6 +28,13 @@ defmodule Thumbifier.User do
     Thumbifier.Repo.one(query)
   end
 
+  def new(%{email: email}) do
+    api_token = Ecto.UUID.generate
+    new_user = %{ %Thumbifier.User{} | email: email, api_token: api_token |> hash } |> Map.from_struct()
+    changeset = Thumbifier.User.changeset(%Thumbifier.User{}, new_user)
+    persist(changeset.valid?, changeset, :insert, %{email: email, api_token: api_token})
+  end
+
   @doc """
   Generate an `api_grant` and save it against the given `user`
   """
@@ -45,6 +52,8 @@ defmodule Thumbifier.User do
   def changeset(model, params \\ nil) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_format(:email, ~r/@/)
+    |> validate_unique(:email, on: Thumbifier.Repo)
   end
 
   def hash(string) do
@@ -54,15 +63,20 @@ defmodule Thumbifier.User do
 
   defp update(user = %Thumbifier.User{}, update_with = %Thumbifier.User{}) do
     changeset = Thumbifier.User.changeset(user, update_with |> Map.from_struct)
-    persist(changeset.valid?, changeset)
+    persist(changeset.valid?, changeset, :update, %{})
   end
 
-  defp persist(true, changeset) do
+  defp persist(true, changeset, :insert, options) do
+    Thumbifier.Repo.insert(changeset)
+    %{email: options.email, api_token: options.api_token}
+  end
+
+  defp persist(true, changeset, :update, _options) do
     Thumbifier.Repo.update(changeset)
     find(%{email: changeset.changes.email})
   end
 
-  defp persist(false, _changeset) do
-    throw("Not a valid changeset")
+  defp persist(false, changeset, _type, _options) do
+    %{error: changeset.errors}
   end
 end

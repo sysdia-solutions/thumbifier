@@ -33,6 +33,31 @@ defmodule UserTest do
     assert nil == Thumbifier.User.find(%{email: user.email, api_token: "sith"})
   end
 
+  test "new - success" do
+    email = "yoda@theforce.com"
+    new_user = Thumbifier.User.new(%{email: email})
+
+    assert new_user.email == email
+    assert new_user.api_token |> String.length == 36
+
+    found_user = Thumbifier.User.find(%{email: email})
+
+    assert found_user.email == email
+    assert found_user.api_token |> String.length == 128
+    assert found_user.api_grant == ""
+    assert found_user.usage_limit == 1
+    assert found_user.usage_counter == 0
+    assert found_user.total_usage == 0
+  end
+
+  test "new - failure due to invalid email" do
+    assert Thumbifier.User.new(%{email: "jajabink"}) == %{error: [email: "has invalid format"]}
+  end
+
+  test "new - failure due to duplicate email", %{user: user} do
+    assert Thumbifier.User.new(%{email: user.email}) == %{error: [email: "has already been taken"]}
+  end
+
   test "generate_grant", %{user: user} do
     check_user = Thumbifier.User.find(%{email: user.email})
     assert check_user.api_grant == user.api_grant

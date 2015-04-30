@@ -80,4 +80,31 @@ defmodule UserControllerTest do
     user_as_json = %{ user | api_grant: Map.get(response.resp_body |> Poison.decode!, "api_grant") } |> Poison.encode!
     assert response.resp_body == user_as_json
   end
+
+  test "/create returns a user when a valid email is supplied" do
+    valid_email = "yoda@theforce.com"
+    response = conn(:post, "/users", %{email: valid_email}) |> send_request
+    body = response.resp_body |> Poison.decode!
+
+    assert response.status == 201
+    assert body["email"] == valid_email
+    assert body["api_token"] |> String.length == 36
+  end
+
+  test "/create returns unprocessable entity when an invalid email is supplied" do
+    invalid_email = "jajabinks"
+    response = conn(:post, "/users", %{email: invalid_email}) |> send_request
+    expected_response = %{"message" => %{"email" => ["has invalid format"]}} |> Poison.encode!
+
+    assert response.status == 422
+    assert response.resp_body == expected_response
+  end
+
+  test "/create returns unprocessable entity when a duplicate email is supplied", %{user: user} do
+    response = conn(:post, "/users", %{email: user.email}) |> send_request
+    expected_response = %{"message" => %{"email" => ["has already been taken"]}} |> Poison.encode!
+
+    assert response.status == 422
+    assert response.resp_body == expected_response
+  end
 end

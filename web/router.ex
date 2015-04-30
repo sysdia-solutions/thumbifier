@@ -24,6 +24,8 @@ defmodule Thumbifier.Router do
 
   scope "/users", Thumbifier do
     pipe_through :api
+    post "/", UserController, :create
+
     pipe_through :authenticated
     get "/:email", UserController, :show
   end
