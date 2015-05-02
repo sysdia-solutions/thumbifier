@@ -48,4 +48,13 @@ defmodule UserTest do
   test "new - failure due to duplicate email", %{user: user} do
     assert Thumbifier.User.new(%{email: user.email}) == %{error: [email: "has already been taken"]}
   end
+
+  test "delete - success", %{user: user} do
+    assert Thumbifier.User.delete(%{email: user.email}) == true
+    assert Thumbifier.User.find(%{email: user.email}) == nil
+  end
+
+  test "delete - failure due to email not found" do
+    assert Thumbifier.User.delete(%{email: "yoda@theforce.com"}) == false
+  end
 end

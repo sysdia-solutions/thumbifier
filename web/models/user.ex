@@ -43,6 +43,11 @@ defmodule Thumbifier.User do
     persist(changeset.valid?, changeset, :insert, %{email: email, api_token: api_token})
   end
 
+  def delete(%{email: email}) do
+    find(%{email: email})
+    |> remove
+  end
+
   @doc """
   Creates a changeset based on the `model` and `params`.
 
@@ -68,5 +73,14 @@ defmodule Thumbifier.User do
   defp persist(true, changeset, :insert, options) do
     Thumbifier.Repo.insert(changeset)
     %{email: options.email, api_token: options.api_token}
+  end
+
+  defp remove(user = %Thumbifier.User{}) do
+    Thumbifier.Repo.delete(user)
+    true
+  end
+
+  defp remove(nil) do
+    false
   end
 end
