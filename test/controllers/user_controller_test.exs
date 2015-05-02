@@ -107,4 +107,38 @@ defmodule UserControllerTest do
     assert response.status == 422
     assert response.resp_body == expected_response
   end
+
+  test "/delete returns No Content header when a valid email and api token are supplied", %{user: user, token: token} do
+    response = conn(:delete, "/users/#{user.email}")
+               |> add_auth_header(token)
+               |> send_request
+
+    assert response.status == 204
+  end
+
+  test "/delete returns unauthorized when no api_token is supplied", %{user: user} do
+    response = conn(:delete, "/users/#{user.email}") |> send_request
+    assert response.status == 401
+    assert response.resp_body == %{error: "Not Authorized"} |> Poison.encode!
+  end
+
+  test "/delete returns unauthorized when an invalid email is supplied", %{token: token} do
+    invalid_email = "Darth@Vadar.com"
+
+    response = conn(:get, "/users/#{invalid_email}")
+               |> add_auth_header(token)
+               |> send_request
+    assert response.status == 401
+    assert response.resp_body == %{error: "Not Authorized"} |> Poison.encode!
+  end
+
+  test "/delete returns unauthorized when an invalid email and api_token are supplied" do
+    invalid_email = "Darth@Vadar.com"
+
+    response = conn(:get, "/users/#{invalid_email}")
+               |> add_auth_header("sith")
+               |> send_request
+    assert response.status == 401
+    assert response.resp_body == %{error: "Not Authorized"} |> Poison.encode!
+  end
 end

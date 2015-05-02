@@ -13,6 +13,22 @@ defmodule Thumbifier.UserController do
     |> create_response(conn, email)
   end
 
+  def delete(conn, %{ "email" => email }) do
+    Thumbifier.User.delete(%{email: email})
+    |> delete_response(conn, email)
+  end
+
+  defp delete_response(true, conn, _email) do
+    conn
+    |> put_status(:no_content)
+  end
+
+  defp delete_response(false, conn, email) do
+    conn
+    |> put_status(:not_found)
+    |> render(error: not_found_error("User", email))
+  end
+
   defp create_response(%{ api_token: token}, conn, email) do
     user = %{email: email, api_token: token}
     conn

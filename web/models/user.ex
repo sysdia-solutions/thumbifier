@@ -35,6 +35,11 @@ defmodule Thumbifier.User do
     persist(changeset.valid?, changeset, :insert, %{email: email, api_token: api_token})
   end
 
+  def delete(%{email: email}) do
+    find(%{email: email})
+    |> remove
+  end
+
   @doc """
   Generate an `api_grant` and save it against the given `user`
   """
@@ -78,5 +83,14 @@ defmodule Thumbifier.User do
 
   defp persist(false, changeset, _type, _options) do
     %{error: changeset.errors}
+  end
+
+  defp remove(user = %Thumbifier.User{}) do
+    Thumbifier.Repo.delete(user)
+    true
+  end
+
+  defp remove(nil) do
+    false
   end
 end
