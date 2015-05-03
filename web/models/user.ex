@@ -49,6 +49,14 @@ defmodule Thumbifier.User do
   end
 
   @doc """
+  Update the given User's `email` with the provided `new_email`
+  """
+  def update_email(user = %Thumbifier.User{}, %{new_email: new_email}) do
+    update_with = %{ user | email: new_email}
+    update(user, update_with)
+  end
+
+  @doc """
   Creates a changeset based on the `model` and `params`.
 
   If `params` are nil, an invalid changeset is returned

@@ -29,5 +29,6 @@ defmodule Thumbifier.Router do
     pipe_through :authenticated
     get "/:email", UserController, :show
     delete "/:email", UserController, :delete
+    put "/:email", UserController, :update
   end
 end

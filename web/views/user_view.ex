@@ -33,4 +33,12 @@ defmodule Thumbifier.UserView do
   def render("delete.json", %{error: error}) do
     error
   end
+
+  def render("update.json", %{error: error}) do
+    error
+  end
+
+  def render("update.json", %{user: user}) do
+    user
+  end
 end
