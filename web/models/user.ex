@@ -49,6 +49,14 @@ defmodule Thumbifier.User do
   end
 
   @doc """
+  Update the given User's `email` with the provided `new_email`
+  """
+  def update_email(user = %Thumbifier.User{}, %{new_email: new_email}) do
+    update_with = %{ user | email: new_email }
+    update(user, update_with)
+  end
+
+  @doc """
   Creates a changeset based on the `model` and `params`.
 
   If `params` are nil, an invalid changeset is returned
@@ -66,6 +74,11 @@ defmodule Thumbifier.User do
     |> Base.encode16
   end
 
+  defp update(user = %Thumbifier.User{}, update_with = %Thumbifier.User{}) do
+    changeset = Thumbifier.User.changeset(user, update_with |> Map.from_struct)
+    persist(changeset.valid?, changeset, :update, %{})
+  end
+
   defp persist(false, changeset, _type, _options) do
     %{error: changeset.errors}
   end
@@ -73,6 +86,11 @@ defmodule Thumbifier.User do
   defp persist(true, changeset, :insert, options) do
     Thumbifier.Repo.insert(changeset)
     %{email: options.email, api_token: options.api_token}
+  end
+
+  defp persist(true, changeset, :update, _options) do
+    Thumbifier.Repo.update(changeset)
+    find(%{email: get_change(changeset, :email, changeset.model.email)})
   end
 
   defp remove(user = %Thumbifier.User{}) do
