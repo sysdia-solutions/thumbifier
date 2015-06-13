@@ -28,4 +28,12 @@ defmodule ApiGrantTest do
     new_api_grant = Thumbifier.ApiGrant.find(%{api_grant: api_grant.api_grant})
     assert new_api_grant == api_grant
   end
+
+  test "delete - false on failure" do
+    assert Thumbifier.ApiGrant.delete(%{api_grant: "droids"}) == false
+  end
+
+  test "delete - true on success", %{api_grant: api_grant} do
+    assert Thumbifier.ApiGrant.delete(%{api_grant: api_grant.api_grant}) == true
+  end
 end

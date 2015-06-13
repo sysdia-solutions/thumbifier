@@ -17,9 +17,8 @@ defmodule Thumbifier.Router do
   end
 
   scope "/", Thumbifier do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
+    pipe_through :api
+    post "/", PageController, :create
   end
 
   scope "/users", Thumbifier do

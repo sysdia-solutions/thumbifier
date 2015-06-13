@@ -49,6 +49,27 @@ defmodule Thumbifier.User do
   end
 
   @doc """
+  Check if the user has enough usage credits in the current reset cycle
+  """
+  def under_usage_limit?(user = %Thumbifier.User{}) do
+    user = usage_cycle_expired?(user) |> reset_usage_cycle(user)
+    user.usage_counter < user.usage_limit
+  end
+
+  def under_usage_limit?(nil) do
+    false
+  end
+
+  @doc """
+  Increase the given User's `usage_counter` by 1
+  """
+  def update_usage_counter(user = %Thumbifier.User{}) do
+    user = Thumbifier.User.find(%{email: user.email})
+    update_with = %{ user | usage_counter: user.usage_counter + 1, total_usage: user.total_usage + 1}
+    update(user, update_with)
+  end
+
+  @doc """
   Update the given User's `email` with the provided `new_email`
   """
   def update_email(user = %Thumbifier.User{}, %{new_email: new_email}) do
@@ -100,5 +121,21 @@ defmodule Thumbifier.User do
 
   defp remove(nil) do
     false
+  end
+
+  defp usage_cycle_expired?(user) do
+    reset_at = user.usage_reset_at
+    reset_trigger = Thumbifier.Util.Time.ecto_now
+                    |> Thumbifier.Util.Time.ecto_shift(mins: -10)
+    reset_trigger >= reset_at
+  end
+
+  defp reset_usage_cycle(false, user) do
+    user
+  end
+
+  defp reset_usage_cycle(true, user) do
+    update_with = %{ user | usage_counter: 0, usage_reset_at: Thumbifier.Util.Time.ecto_now}
+    update(user, update_with)
   end
 end

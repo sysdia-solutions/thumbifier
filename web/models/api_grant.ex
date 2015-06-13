@@ -28,4 +28,18 @@ defmodule Thumbifier.ApiGrant do
 
     %{api_grant: api_grant}
   end
+
+  def delete(%{api_grant: api_grant}) do
+    find(%{api_grant: api_grant})
+    |> remove
+  end
+
+  defp remove(api_grant = %Thumbifier.ApiGrant{}) do
+    Thumbifier.Repo.delete(api_grant)
+    true
+  end
+
+  defp remove(nil) do
+    false
+  end
 end

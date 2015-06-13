@@ -3,7 +3,57 @@ defmodule Thumbifier.PageController do
 
   plug :action
 
-  def index(conn, _params) do
-    render conn, "index.html"
+  def create(conn, params) do
+    post_optional_params = %{"personal_reference" => "", "quality" => "72", "dimensions" => "100x100", "page" => "1", "frame" => "1"}
+
+    params = Map.merge(post_optional_params, params)
+    create_check_grant(conn, params)
+  end
+
+  defp create_check_grant(conn, params) do
+    Thumbifier.ApiGrant.find(%{api_grant: params["api_grant"]})
+    |> create_check_limit(conn, params)
+  end
+
+  defp create_check_limit(nil, conn, params) do
+    conn
+    |> put_status(:unauthorized)
+    |> render(error: %Thumbifier.Error.Unauthorized{resource: "Grant", id: params["api_grant"]})
+  end
+
+  defp create_check_limit(api_grant = %Thumbifier.ApiGrant{}, conn, params) do
+    Thumbifier.ApiGrant.delete(%{api_grant: api_grant.api_grant})
+
+    user = Thumbifier.User.find(%{email: api_grant.user_email})
+    Thumbifier.User.under_usage_limit?(user)
+    |> create_validate_url(conn, params, user)
+  end
+
+  defp create_validate_url(false, conn, _params, user) do
+    conn
+    |> put_status(:too_many_requests)
+    |> render(error: %Thumbifier.Error.TooManyRequests{resource: "User", id: to_string(user.usage_counter) <> "/" <> to_string(user.usage_limit)})
+  end
+
+  defp create_validate_url(true, conn, params, user) do
+    Thumbifier.Util.Validation.uri(params["media_url"])
+    |> create_process(conn, params, user)
+  end
+
+  defp create_process(false, conn, params, _user) do
+    conn
+    |> put_status(:bad_request)
+    |> render(error: %Thumbifier.Error.BadRequest{resource: "Request", id: params["media_url"]})
+  end
+
+  defp create_process(true, conn, params, user) do
+    params = Map.merge(%{"response_id" => Ecto.UUID.generate}, params)
+
+    Thumbifier.User.update_usage_counter(user)
+    Thumbifier.Convert.Dispatcher.dispatch(params)
+
+    conn
+    |> put_status(:created)
+    |> render(ok: params["response_id"])
   end
 end

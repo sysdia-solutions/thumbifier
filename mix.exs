@@ -35,6 +35,7 @@ defmodule Thumbifier.Mixfile do
      {:exrm, "~> 0.15.3"},
      {:cowboy, "~> 1.0"},
      {:timex, "~> 0.13.4"},
-     {:poolboy, "~> 1.4.1"}]
+     {:poolboy, "~> 1.4.1"},
+     {:mock, "~> 0.1.1"}]
   end
 end
