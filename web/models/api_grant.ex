@@ -34,6 +34,25 @@ defmodule Thumbifier.ApiGrant do
     |> remove
   end
 
+  @doc """
+  Delete all ApiGrants that have exeeced the expiry time
+  """
+  def purge() do
+    now = Thumbifier.Util.Time.ecto_now
+    query = from g in Thumbifier.ApiGrant,
+            where: g.expires_at <= ^now
+    Thumbifier.Repo.delete_all(query)
+  end
+
+  @doc """
+  Delete all ApiGrants for the given user_email
+  """
+  def purge(%{user_email: user_email}) do
+    query = from g in Thumbifier.ApiGrant,
+            where: g.user_email == ^user_email
+    Thumbifier.Repo.delete_all(query)
+  end
+
   defp remove(api_grant = %Thumbifier.ApiGrant{}) do
     Thumbifier.Repo.delete(api_grant)
     true

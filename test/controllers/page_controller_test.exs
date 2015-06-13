@@ -45,6 +45,10 @@ defmodule Thumbifier.PageControllerTest do
     api_grant_han_solo = %Thumbifier.ApiGrant{user_email: user_han_solo.email, api_grant: "smuggler"}
                          |>Thumbifier.Repo.insert
 
+    expired_time = Thumbifier.Util.Time.ecto_now |> Thumbifier.Util.Time.ecto_shift(mins: -10)
+    api_grant_darth_maul = %Thumbifier.ApiGrant{user_email: "darth@maul.com", api_grant: "dead_sith", expires_at: expired_time}
+                         |>Thumbifier.Repo.insert
+
     {:ok,
       user_luke_skywalker: user_luke_skywalker,
       user_boba_fett: user_boba_fett,
@@ -52,6 +56,7 @@ defmodule Thumbifier.PageControllerTest do
       api_grant_luke_skywalker: api_grant_luke_skywalker,
       api_grant_boba_fett: api_grant_boba_fett,
       api_grant_han_solo: api_grant_han_solo,
+      api_grant_darth_maul: api_grant_darth_maul
     }
   end
 
@@ -84,6 +89,22 @@ defmodule Thumbifier.PageControllerTest do
     api_grant = Thumbifier.ApiGrant.find(%{api_grant: data["api_grant"]})
 
     assert api_grant == nil
+  end
+
+  test "/create purges all expired api grants on processing the request", %{api_grant_darth_maul: api_grant_darth_maul} do
+    data = %{
+      api_grant: api_grant_darth_maul.api_grant,
+      media_url: "http://www.testurl.com",
+      callback_url: "http://mycallback.com"
+    }
+    response = conn(:post, "/", data) |> send_request
+
+    api_grant = Thumbifier.ApiGrant.find(%{api_grant: data.api_grant})
+
+    assert api_grant == nil
+
+    assert response.status == 401
+    assert response.resp_body == %{message: "Grant '#{data.api_grant}' is not authorized"} |> Poison.encode!
   end
 
   test "/create returns too_many_requests when usage limit is exceeded", %{api_grant_boba_fett: api_grant_boba_fett}  do

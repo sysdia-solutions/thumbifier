@@ -118,6 +118,19 @@ defmodule UserControllerTest do
     assert response.status == 204
   end
 
+  test "/delete purges all api_grants for deleted user", %{user_luke_skywalker: user_luke_skywalker, token: token} do
+    api_grant = "luke1"
+    %Thumbifier.ApiGrant{ user_email: user_luke_skywalker.email, api_grant: api_grant }
+    |> Thumbifier.Repo.insert
+
+    response = conn(:delete, "/users/#{user_luke_skywalker.email}")
+               |> add_auth_header(token)
+               |> send_request
+
+    assert response.status == 204
+    assert Thumbifier.ApiGrant.find(%{api_grant: api_grant}) == nil
+  end
+
   test "/delete returns unauthorized when no api_token is supplied", %{user_luke_skywalker: user_luke_skywalker} do
     response = conn(:delete, "/users/#{user_luke_skywalker.email}") |> send_request
     assert response.status == 401

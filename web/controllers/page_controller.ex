@@ -11,6 +11,7 @@ defmodule Thumbifier.PageController do
   end
 
   defp create_check_grant(conn, params) do
+    Thumbifier.ApiGrant.purge()
     Thumbifier.ApiGrant.find(%{api_grant: params["api_grant"]})
     |> create_check_limit(conn, params)
   end

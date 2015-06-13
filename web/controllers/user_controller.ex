@@ -47,7 +47,8 @@ defmodule Thumbifier.UserController do
     |> render(error: unprocessable_entity_error("User", error))
   end
 
-  defp delete_response(true, conn, _email) do
+  defp delete_response(true, conn, email) do
+    Thumbifier.ApiGrant.purge(%{user_email: email})
     conn
     |> put_status(:no_content)
     |> render()
