@@ -5,6 +5,11 @@
 # is restricted to this project.
 use Mix.Config
 
+# General config
+config :thumbifier,
+  poolboy_size: System.get_env("ENV_THUMBIFIER_POOLBOY_SIZE") || "2" |> String.to_integer,
+  poolboy_max_overflow: System.get_env("ENV_THUMBIFIER_POOLBOY_MAX_OVERFLOW") || "1" |> String.to_integer
+
 # Configures the endpoint
 config :thumbifier, Thumbifier.Endpoint,
   url: [host: "localhost"],

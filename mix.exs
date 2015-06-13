@@ -17,7 +17,7 @@ defmodule Thumbifier.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [mod: {Thumbifier, []},
-     applications: [:phoenix, :cowboy, :logger, :ecto, :postgrex]]
+     applications: [:phoenix, :cowboy, :logger, :ecto, :postgrex, :poolboy]]
   end
 
   # Specifies which paths to compile per environment
@@ -34,6 +34,7 @@ defmodule Thumbifier.Mixfile do
      {:phoenix_live_reload, "~> 0.3"},
      {:exrm, "~> 0.15.3"},
      {:cowboy, "~> 1.0"},
-     {:timex, "~> 0.13.4"}]
+     {:timex, "~> 0.13.4"},
+     {:poolboy, "~> 1.4.1"}]
   end
 end
