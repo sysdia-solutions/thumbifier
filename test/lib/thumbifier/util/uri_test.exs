@@ -51,4 +51,17 @@ defmodule URITest do
     uri = "pdf/file.pdf"
     assert Thumbifier.Util.URI.details(uri) == {:error, uri <> " is not a valid URI"}
   end
+
+  test "download - downloads the given uri to the given save location" do
+    uri = "http://www.pdf995.com/samples/pdf.pdf"
+    save_to = System.tmp_dir! <> "/testfile.pdf"
+    assert Thumbifier.Util.URI.download(uri, save_to) == {:ok, save_to}
+    assert File.exists?(save_to) == true
+    File.rm(save_to)
+  end
+
+  test "download - displays error message on invalid URI" do
+    uri = "pdf/file.pdf"
+    assert Thumbifier.Util.URI.download(uri, "") == {:error, uri <> " is not a valid URI"}
+  end
 end

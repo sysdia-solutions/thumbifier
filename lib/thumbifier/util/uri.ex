@@ -19,6 +19,23 @@ defmodule Thumbifier.Util.URI do
     |> details_response(uri)
   end
 
+  @doc """
+  Download a remote uri and save to the given local save location
+  """
+  def download(uri, save_to) do
+    valid?(uri)
+    |> download_response(uri, save_to)
+  end
+
+  defp download_response(false, uri, _save_to) do
+    {:error, uri <> " is not a valid URI"}
+  end
+
+  defp download_response(true, uri, save_to) do
+    Thumbifier.Util.Shell.wget(uri, save_to)
+    {:ok, save_to}
+  end
+
   defp details_response(false, uri) do
     {:error, uri <> " is not a valid URI"}
   end
