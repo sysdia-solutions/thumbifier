@@ -37,7 +37,7 @@ defmodule Thumbifier.PageController do
   end
 
   defp create_validate_url(true, conn, params, user) do
-    Thumbifier.Util.Validation.uri(params["media_url"])
+    Thumbifier.Util.URI.valid?(params["media_url"])
     |> create_process(conn, params, user)
   end
 
