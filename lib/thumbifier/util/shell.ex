@@ -12,4 +12,11 @@ defmodule Thumbifier.Util.Shell do
   def wget(uri, save_to) do
     Sh.wget "-O", save_to, uri
   end
+
+  @doc """
+  Display the mime_type for the given file path
+  """
+  def file_mime_type(file_path) do
+    Sh.file "-b", "--mime-type", file_path
+  end
 end
