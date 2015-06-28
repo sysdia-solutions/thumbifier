@@ -3,8 +3,20 @@ defmodule Thumbifier.Convert.Converter do
   Call ImageMagick convert function on given file to convert to jpg and resize
   """
   def resize(file, quality, size) do
-    File.exists?(file)
+    Regex.replace(~r/\[[0-9]+\]/, file, "")
+    |> File.exists?
     |> resize_response(file, quality, size)
+  end
+
+  @doc """
+  Convert a PDF to a jpg
+  """
+  def from_pdf(file, quality, size, page) do
+    if !is_integer(page) do
+      page = page |> Integer.parse |> elem(0)
+    end
+    "#{file}[#{page - 1}]"
+    |> resize(quality, size)
   end
 
   defp resize_response(false, file, _quality, _size) do

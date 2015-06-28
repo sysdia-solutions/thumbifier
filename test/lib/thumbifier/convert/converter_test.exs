@@ -19,4 +19,13 @@ defmodule ConverterTest do
     assert File.exists?(output_path) == true
     File.rm(output_path)
   end
+
+  test "pdf - outputs a jpg from a source pdf for the given page", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "pdf.pdf"
+    results = Thumbifier.Convert.Converter.from_pdf(file_path, 72, "100x100", 1)
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
 end
