@@ -19,4 +19,11 @@ defmodule Thumbifier.Util.Shell do
   def file_mime_type(file_path) do
     Sh.file "-b", "--mime-type", file_path
   end
+
+  @doc """
+  Call the ImageMagick convert command line function
+  """
+  def convert(params) do
+    apply(Sh, :convert, params)
+  end
 end
