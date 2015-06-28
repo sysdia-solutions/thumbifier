@@ -12,6 +12,13 @@ defmodule Thumbifier.Util.URI do
   end
 
   @doc """
+  HTTP POST the given data map to the provided uri
+  """
+  def post(data, uri) do
+    HTTPoison.post(uri, data)
+  end
+
+  @doc """
   Return the type and file size of the given URI
   """
   def details(uri) do
@@ -61,6 +68,10 @@ defmodule Thumbifier.Util.URI do
 
   defp uri_size(data) do
     results = Regex.run(~r/.*Length:\s(.*)\s\(/, data)
-    List.last(results) |> String.to_integer
+    if results == nil do
+      0
+    else
+      List.last(results) |> String.to_integer
+    end
   end
 end

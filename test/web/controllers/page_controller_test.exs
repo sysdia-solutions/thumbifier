@@ -140,7 +140,7 @@ defmodule Thumbifier.PageControllerTest do
         "dimensions" => "100x100",
         "format" => "json",
         "frame" => "1",
-        "media_url" => "http://www.pdf995.com/samples/pdf.pdf",
+        "media_url" => "https://github.com/sysdia/thumbifier/raw/master/test/fixtures/files/pdf.pdf",
         "page" => "1",
         "personal_reference" => "",
         "response_id" => "c6f05692-e293-411d-a1bd-d44918746838"
@@ -165,7 +165,7 @@ defmodule Thumbifier.PageControllerTest do
         "dimensions" => "100x100",
         "format" => "json",
         "frame" => "1",
-        "media_url" => "http://www.pdf995.com/samples/pdf.pdf",
+        "media_url" => "https://github.com/sysdia/thumbifier/raw/master/test/fixtures/files/pdf.pdf",
         "page" => "1",
         "personal_reference" => "",
         "response_id" => "c6f05692-e293-411d-a1bd-d44918746838"

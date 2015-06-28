@@ -10,7 +10,8 @@ defmodule Thumbifier.Convert.Worker do
   end
 
   def handle_call(data, _from, state) do
-    Thumbifier.Convert.Processor.process(data)
+    Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
     {:reply, [], state}
   end
 end

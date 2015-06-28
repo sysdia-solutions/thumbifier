@@ -53,7 +53,7 @@ defmodule URITest do
   end
 
   test "download - downloads the given uri to the given save location" do
-    uri = "http://www.pdf995.com/samples/pdf.pdf"
+    uri = "https://github.com/sysdia/thumbifier/raw/master/test/fixtures/files/pdf.pdf"
     save_to = System.tmp_dir! <> "/testfile.pdf"
     assert Thumbifier.Util.URI.download(uri, save_to) == {:ok, save_to}
     assert File.exists?(save_to) == true

@@ -25,7 +25,6 @@ defmodule Thumbifier.Convert.Converter do
 
   defp resize_response(true, file, quality, size) do
     output =  System.tmp_dir! <> "/" <> Ecto.UUID.generate <> ".jpg"
-
     if is_integer(quality) do
       quality = quality |> Integer.to_string
     end
