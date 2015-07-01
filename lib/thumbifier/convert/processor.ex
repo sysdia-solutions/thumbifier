@@ -39,11 +39,31 @@ defmodule Thumbifier.Convert.Processor do
   end
 
   defp process_convert(mime_type, source, data) do
-    case mime_type do
-      "application/pdf" ->
-         Thumbifier.Convert.Converter.from_pdf(source, data["quality"], data["dimensions"], data["page"])
-      _ ->
-         {:error, "mime-type " <> mime_type <> " not supported"}
+    cond do
+      mime_type == "image/jpg" or
+      mime_type == "image/pjpeg" or
+      mime_type == "image/jpeg" or
+      mime_type == "image/gif" or
+      mime_type == "image/png" or
+      mime_type == "image/bmp" or
+      mime_type == "image/x-bmp" or
+      mime_type == "image/x-bitmap" or
+      mime_type == "image/x-xbitmap" or
+      mime_type == "image/x-win-bitmap" or
+      mime_type == "image/x-windows-bmp" or
+      mime_type == "image/ms-bmp" or
+      mime_type == "image/x-ms-bmp" or
+      mime_type == "image/tif" or
+      mime_type == "image/x-tif" or
+      mime_type == "image/tiff" or
+      mime_type == "image/x-tiff" ->
+        Thumbifier.Convert.Converter.resize(source, data["quality"], data["dimensions"])
+
+      mime_type == "application/pdf" ->
+        Thumbifier.Convert.Converter.from_pdf(source, data["quality"], data["dimensions"], data["page"])
+
+      true ->
+        {:error, "mime-type " <> mime_type <> " not supported"}
     end
     |> process_output(data)
   end
