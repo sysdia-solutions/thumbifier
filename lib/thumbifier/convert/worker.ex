@@ -12,6 +12,8 @@ defmodule Thumbifier.Convert.Worker do
   def handle_call(data, _from, state) do
     Application.get_env(:thumbifier, :max_file_size)
     |> Thumbifier.Convert.Processor.process(data)
+    |> Thumbifier.Convert.Processor.callback_payload(data)
+    |> Thumbifier.Util.URI.post(data["callback_url"])
     {:reply, [], state}
   end
 end

@@ -1,6 +1,5 @@
 defmodule ProcessorTest do
   use Thumbifier.ConnCase
-  import Mock
 
   setup do
     remote_fixtures_path = "https://github.com/sysdia/thumbifier/raw/master/test/fixtures/files/"
@@ -20,45 +19,25 @@ defmodule ProcessorTest do
     {:ok, data: data, remote_fixtures_path: remote_fixtures_path}
   end
 
-  defp process_expected(data) do
-    path = elem(data, 1)
-    expected_image = File.read!(path) |> Base.encode64
-    File.rm!(path)
-    expected_image
+  defp image_compare(expected_file_path, actual_data) do
+    file_content = Base.decode64(actual_data) |> elem(1)
+    temp_file = System.tmp_dir! <> "/" <> Ecto.UUID.generate
+    File.write!(temp_file, file_content)
+    result = Sh.compare "-metric", "AE", "-fuzz", "26000", temp_file, expected_file_path, "null:"
+    File.rm!(temp_file)
+    result == "0"
   end
 
   test "process - posts error when provided media_url is too large", %{data: data} do
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Thumbifier.Convert.Processor.process(1, data)
-
-      form = { :form,
-        [
-          status: "error",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: "[0002] File limit exceeded"
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    assert Thumbifier.Convert.Processor.process(1, data) == %{status: "error", payload: "[0002] File limit exceeded"}
   end
 
   test "process - posts error when provided media_url is not supported", %{data: data, remote_fixtures_path: remote_fixtures_path} do
     data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "iff.iff"})
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-      form = { :form,
-        [
-          status: "error",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: "[0003] mime-type application/octet-stream not supported"
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    assert result == %{status: "error", payload: "[0003] mime-type application/octet-stream not supported"}
   end
 
   test "process - success for tiff file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
@@ -67,115 +46,60 @@ defmodule ProcessorTest do
       "dimensions" => "250x250"
       })
 
-    expected_image = System.cwd <> "/test/fixtures/files/tiff.tiff"
-    |> Thumbifier.Convert.Converter.resize(data["quality"], data["dimensions"])
-    |> process_expected
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    assert result.status == "ok"
 
-      form = { :form,
-        [
-          status: "success",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: expected_image
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    fixture = "test/fixtures/files/tiff_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
   end
 
   test "process - success for png file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
     data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "png.png"})
 
-    expected_image = System.cwd <> "/test/fixtures/files/png.png"
-    |> Thumbifier.Convert.Converter.resize(data["quality"], data["dimensions"])
-    |> process_expected
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    assert result.status == "ok"
 
-      form = { :form,
-        [
-          status: "success",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: expected_image
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    fixture = "test/fixtures/files/png_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
   end
 
   test "process - success for gif file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
     data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "gif.gif"})
 
-    expected_image = System.cwd <> "/test/fixtures/files/gif.gif"
-    |> Thumbifier.Convert.Converter.resize(data["quality"], data["dimensions"])
-    |> process_expected
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    assert result.status == "ok"
 
-      form = { :form,
-        [
-          status: "success",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: expected_image
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    fixture = "test/fixtures/files/gif_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
   end
 
   test "process - success for bmp file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
     data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "bmp.bmp"})
 
-    expected_image = System.cwd <> "/test/fixtures/files/bmp.bmp"
-    |> Thumbifier.Convert.Converter.resize(data["quality"], data["dimensions"])
-    |> process_expected
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    assert result.status == "ok"
 
-      form = { :form,
-        [
-          status: "success",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: expected_image
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    fixture = "test/fixtures/files/bmp_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
   end
 
   test "process - success for pdf file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
     data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "pdf.pdf"})
 
-    expected_image = System.cwd <> "/test/fixtures/files/pdf.pdf"
-    |> Thumbifier.Convert.Converter.from_pdf(data["quality"], data["dimensions"], data["page"])
-    |> process_expected
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
 
-    with_mock HTTPoison, [post: fn(_data, _callback_url) -> :ok end] do
-      Application.get_env(:thumbifier, :max_file_size)
-      |> Thumbifier.Convert.Processor.process(data)
+    assert result.status == "ok"
 
-      form = { :form,
-        [
-          status: "success",
-          response_id: data["response_id"],
-          personal_reference: data["personal_reference"],
-          payload: expected_image
-        ]
-      }
-      assert called HTTPoison.post(data["callback_url"], form)
-    end
+    fixture = "test/fixtures/files/pdf_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
   end
 end

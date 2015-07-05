@@ -4,8 +4,19 @@ defmodule Thumbifier.Convert.Processor do
     |> process_remote_file_details(data, max_file_size)
   end
 
-  defp process_remote_file_details({:error, message}, data, _max_file_size) do
-    process_callback(data["callback_url"], "error", data["response_id"], data["personal_reference"], "[0001] " <> message)
+  def callback_payload(%{status: status, payload: payload}, data) do
+    { :form,
+      [
+        status: status,
+        response_id: data["response_id"],
+        personal_reference: data["personal_reference"],
+        payload: payload
+      ]
+    }
+  end
+
+  defp process_remote_file_details({:error, message}, _data, _max_file_size) do
+    %{status: "error", payload: "[0001]" <> message}
   end
 
   defp process_remote_file_details({:ok, details}, data, max_file_size) do
@@ -18,8 +29,8 @@ defmodule Thumbifier.Convert.Processor do
     size < max_file_size
   end
 
-  defp process_remote_file(false, _type, data) do
-    process_callback(data["callback_url"], "error", data["response_id"], data["personal_reference"], "[0002] File limit exceeded")
+  defp process_remote_file(false, _type, _data) do
+    %{status: "error", payload: "[0002] File limit exceeded"}
   end
 
   defp process_remote_file(true, :file, data) do
@@ -28,10 +39,12 @@ defmodule Thumbifier.Convert.Processor do
 
     mime_type = Thumbifier.Util.File.mime_type(source)
 
-    elem(mime_type, 1)
+    result = elem(mime_type, 1)
     |> process_convert(source, data)
 
     File.rm(source)
+
+    result
   end
 
   defp process_remote_file(true, :site, data) do
@@ -68,28 +81,16 @@ defmodule Thumbifier.Convert.Processor do
     |> process_output(data)
   end
 
-  defp process_output({:error, message}, data) do
-    process_callback(data["callback_url"], "error", data["response_id"], data["personal_reference"], "[0003] " <> message)
+  defp process_output({:error, message}, _data) do
+    %{status: "error", payload: "[0003] " <> message}
   end
 
-  defp process_output({:ok, output}, data) do
+  defp process_output({:ok, output}, _data) do
     encoded = output
               |> File.read!
               |> Base.encode64
 
-    process_callback(data["callback_url"], "success", data["response_id"], data["personal_reference"], encoded)
     File.rm(output)
-  end
-
-  defp process_callback(callback_url, status, response_id, personal_reference, payload) do
-    { :form,
-      [
-        status: status,
-        response_id: response_id,
-        personal_reference: personal_reference,
-        payload: payload
-      ]
-    }
-    |> Thumbifier.Util.URI.post(callback_url)
+    %{status: "ok", payload: encoded}
   end
 end
