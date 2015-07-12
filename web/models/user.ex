@@ -3,7 +3,7 @@ defmodule Thumbifier.User do
 
   schema "users" do
     field :email, :string
-    field :api_token, :string
+    field :api_key, :string
     field :usage_limit, :integer, default: 10
     field :usage_counter, :integer, default: 0
     field :usage_reset_at, Ecto.DateTime
@@ -12,12 +12,12 @@ defmodule Thumbifier.User do
     timestamps
   end
 
-  @required_fields ~w(email api_token usage_limit usage_counter usage_reset_at total_usage)
+  @required_fields ~w(email api_key usage_limit usage_counter usage_reset_at total_usage)
   @optional_fields ~w()
 
-  def find(%{email: email, api_token: api_token}) do
+  def find(%{email: email, api_key: api_key}) do
     query = from u in Thumbifier.User,
-            where: u.email == ^email and u.api_token == ^hash(api_token)
+            where: u.email == ^email and u.api_key == ^hash(api_key)
     Thumbifier.Repo.one(query)
   end
 
@@ -28,19 +28,19 @@ defmodule Thumbifier.User do
   end
 
   def new(%{email: email}) do
-    api_token = Ecto.UUID.generate
+    api_key = Ecto.UUID.generate
     usage_reset_at = Thumbifier.Util.Time.ecto_now
     new_user = %{
                  %Thumbifier.User{} |
                  email: email,
-                 api_token: api_token
-                            |> hash,
+                 api_key: api_key
+                          |> hash,
                  usage_reset_at: usage_reset_at
                 }
                 |> Map.from_struct
 
     changeset = Thumbifier.User.changeset(%Thumbifier.User{}, new_user)
-    persist(changeset.valid?, changeset, :insert, %{email: email, api_token: api_token})
+    persist(changeset.valid?, changeset, :insert, %{email: email, api_key: api_key})
   end
 
   def delete(%{email: email}) do
@@ -106,7 +106,7 @@ defmodule Thumbifier.User do
 
   defp persist(true, changeset, :insert, options) do
     Thumbifier.Repo.insert(changeset)
-    %{email: options.email, api_token: options.api_token}
+    %{email: options.email, api_key: options.api_key}
   end
 
   defp persist(true, changeset, :update, _options) do

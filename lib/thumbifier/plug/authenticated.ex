@@ -11,23 +11,23 @@ defmodule Thumbifier.Plug.Authenticated do
 
   def call(conn, _opts) do
     email =  Map.get(conn.params, "email")
-    api_token = get_req_header(conn, "authorization")
+    api_key = get_req_header(conn, "authorization")
 
-    case check_token(email, api_token) do
+    case check_key(email, api_key) do
       {:ok, user} -> assign(conn, :user, user)
       {:error, message} -> send_resp(conn, :unauthorized, Poison.encode!(%{error: message}))
       |> halt
     end
   end
 
-  defp check_token(email, ["Bearer " <> token]) do
-    case Thumbifier.User.find(%{email: email, api_token: token}) do
-      nil -> check_token(:error, :error)
+  defp check_key(email, ["Bearer " <> key]) do
+    case Thumbifier.User.find(%{email: email, api_key: key}) do
+      nil -> check_key(:error, :error)
       user -> {:ok, user}
     end
   end
 
-  defp check_token(_email, _token) do
+  defp check_key(_email, _key) do
     {:error, "Not Authorized"}
   end
 end

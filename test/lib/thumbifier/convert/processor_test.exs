@@ -4,7 +4,7 @@ defmodule ProcessorTest do
   setup do
     remote_fixtures_path = "https://github.com/sysdia/thumbifier/raw/master/test/fixtures/files/"
     data = %{
-      "api_grant" => "grant",
+      "access_token" => "token",
       "callback_url" => "http://mycallbackurl.com",
       "dimensions" => "100x100",
       "quality" => "72",

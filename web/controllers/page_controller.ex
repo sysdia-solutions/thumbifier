@@ -7,25 +7,25 @@ defmodule Thumbifier.PageController do
     post_optional_params = %{"personal_reference" => "", "quality" => "72", "dimensions" => "100x100", "page" => "1", "frame" => "1"}
 
     params = Map.merge(post_optional_params, params)
-    create_check_grant(conn, params)
+    create_check_access_token(conn, params)
   end
 
-  defp create_check_grant(conn, params) do
-    Thumbifier.ApiGrant.purge()
-    Thumbifier.ApiGrant.find(%{api_grant: params["api_grant"]})
+  defp create_check_access_token(conn, params) do
+    Thumbifier.AccessToken.purge()
+    Thumbifier.AccessToken.find(%{access_token: params["access_token"]})
     |> create_check_limit(conn, params)
   end
 
   defp create_check_limit(nil, conn, params) do
     conn
     |> put_status(:unauthorized)
-    |> render(error: %Thumbifier.Error.Unauthorized{resource: "Grant", id: params["api_grant"]})
+    |> render(error: %Thumbifier.Error.Unauthorized{resource: "AccessToken", id: params["access_token"]})
   end
 
-  defp create_check_limit(api_grant = %Thumbifier.ApiGrant{}, conn, params) do
-    Thumbifier.ApiGrant.delete(%{api_grant: api_grant.api_grant})
+  defp create_check_limit(access_token = %Thumbifier.AccessToken{}, conn, params) do
+    Thumbifier.AccessToken.delete(%{access_token: access_token.access_token})
 
-    user = Thumbifier.User.find(%{email: api_grant.user_email})
+    user = Thumbifier.User.find(%{email: access_token.user_email})
     Thumbifier.User.under_usage_limit?(user)
     |> create_validate_url(conn, params, user)
   end

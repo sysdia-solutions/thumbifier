@@ -48,7 +48,7 @@ defmodule Thumbifier.UserController do
   end
 
   defp delete_response(true, conn, email) do
-    Thumbifier.ApiGrant.purge(%{user_email: email})
+    Thumbifier.AccessToken.purge(%{user_email: email})
     conn
     |> put_status(:no_content)
     |> render()
@@ -60,8 +60,8 @@ defmodule Thumbifier.UserController do
     |> render(error: not_found_error("User", email))
   end
 
-  defp create_response(%{ api_token: token}, conn, email) do
-    user = %{email: email, api_token: token}
+  defp create_response(%{ api_key: key}, conn, email) do
+    user = %{email: email, api_key: key}
     conn
     |> put_status(:created)
     |> render(user: user)
@@ -75,7 +75,7 @@ defmodule Thumbifier.UserController do
 
   defp show_response(user = %Thumbifier.User{}, conn, _email) do
     conn
-    |> render(user: user,  api_grant: Thumbifier.ApiGrant.generate |> Thumbifier.ApiGrant.new(user.email))
+    |> render(user: user,  access_token: Thumbifier.AccessToken.generate |> Thumbifier.AccessToken.new(user.email))
   end
 
   defp show_response(nil, conn, email) do

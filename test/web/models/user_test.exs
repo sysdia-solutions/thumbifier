@@ -2,11 +2,11 @@ defmodule UserTest do
   use Thumbifier.ConnCase
 
   setup do
-    token_luke_skywalker = "rebel"
+    key_luke_skywalker = "rebel"
     user_luke_skywalker =
       %Thumbifier.User{
         email: "Luke@Skywalker.com",
-        api_token: token_luke_skywalker |> Thumbifier.User.hash,
+        api_key: key_luke_skywalker |> Thumbifier.User.hash,
         usage_limit: 10,
         usage_counter: 0,
         usage_reset_at: Thumbifier.Util.Time.ecto_now,
@@ -17,7 +17,7 @@ defmodule UserTest do
     user_darth_vader =
       %Thumbifier.User{
         email: "Darth@Vader.com",
-        api_token: "sith" |> Thumbifier.User.hash,
+        api_key: "sith" |> Thumbifier.User.hash,
         usage_limit: 10,
         usage_counter: 10,
         usage_reset_at: Thumbifier.Util.Time.ecto_now,
@@ -28,7 +28,7 @@ defmodule UserTest do
     user_darth_maul =
       %Thumbifier.User{
         email: "Darth@Maul.com",
-        api_token: "republican" |> Thumbifier.User.hash,
+        api_key: "republican" |> Thumbifier.User.hash,
         usage_limit: 10,
         usage_counter: 10,
         usage_reset_at: Thumbifier.Util.Time.ecto_now |> Thumbifier.Util.Time.ecto_shift(mins: -15),
@@ -36,15 +36,15 @@ defmodule UserTest do
       }
       |> Thumbifier.Repo.insert
 
-    {:ok, user_luke_skywalker: user_luke_skywalker, user_darth_vader: user_darth_vader, user_darth_maul: user_darth_maul, token_luke_skywalker: token_luke_skywalker}
+    {:ok, user_luke_skywalker: user_luke_skywalker, user_darth_vader: user_darth_vader, user_darth_maul: user_darth_maul, key_luke_skywalker: key_luke_skywalker}
   end
 
-  test "find", %{user_luke_skywalker: user_luke_skywalker, token_luke_skywalker: token_luke_skywalker} do
+  test "find", %{user_luke_skywalker: user_luke_skywalker, key_luke_skywalker: key_luke_skywalker} do
     assert user_luke_skywalker == Thumbifier.User.find(%{email: user_luke_skywalker.email})
     assert nil == Thumbifier.User.find(%{email: "Darth@Vadar.com"})
-    assert user_luke_skywalker == Thumbifier.User.find(%{email: user_luke_skywalker.email, api_token: token_luke_skywalker})
-    assert nil == Thumbifier.User.find(%{email: "darth@vadar.com", api_token: "sith"})
-    assert nil == Thumbifier.User.find(%{email: user_luke_skywalker.email, api_token: "sith"})
+    assert user_luke_skywalker == Thumbifier.User.find(%{email: user_luke_skywalker.email, api_key: key_luke_skywalker})
+    assert nil == Thumbifier.User.find(%{email: "darth@vadar.com", api_key: "sith"})
+    assert nil == Thumbifier.User.find(%{email: user_luke_skywalker.email, api_key: "sith"})
   end
 
   test "new - success" do
@@ -52,12 +52,12 @@ defmodule UserTest do
     new_user = Thumbifier.User.new(%{email: email})
 
     assert new_user.email == email
-    assert new_user.api_token |> String.length == 36
+    assert new_user.api_key |> String.length == 36
 
     found_user = Thumbifier.User.find(%{email: email})
 
     assert found_user.email == email
-    assert found_user.api_token |> String.length == 128
+    assert found_user.api_key |> String.length == 128
     assert found_user.usage_limit == 10
     assert found_user.usage_counter == 0
     assert found_user.total_usage == 0
