@@ -8,4 +8,12 @@ defmodule Thumbifier.PageView do
   def render("create.json", %{ok: response_id}) do
     response_id
   end
+
+  def render("list.json", %{ok: data}) do
+    data
+  end
+
+  def render("show.json", %{ok: result}) do
+    result
+  end
 end

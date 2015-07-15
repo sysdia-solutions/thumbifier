@@ -3,6 +3,16 @@ defmodule Thumbifier.PageController do
 
   plug :action
 
+  def list(conn, _params) do
+    conn
+    |> render(ok: Thumbifier.Convert.Types.all)
+  end
+
+  def show(conn, %{"type" => type}) do
+    conn
+    |> render(ok: Thumbifier.Convert.Types.is_supported?(type |> String.replace("_", "/")))
+  end
+
   def create(conn, params) do
     post_optional_params = %{"personal_reference" => "", "quality" => "72", "dimensions" => "100x100", "page" => "1", "frame" => "1"}
 

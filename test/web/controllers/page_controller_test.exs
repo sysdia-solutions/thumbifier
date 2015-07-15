@@ -187,4 +187,17 @@ defmodule Thumbifier.PageControllerTest do
       assert check_user.usage_counter == 1
     end
   end
+
+  test "GET / displays a JSON array of supported mime-types" do
+    response = conn(:get, "/") |> send_request
+    assert response.resp_body |> Poison.decode! == Thumbifier.Convert.Types.all
+  end
+
+  test "GET /:type displays JSON true or false if given mime-type is supported" do
+    response = conn(:get, "/application_pdf") |> send_request
+    assert response.resp_body |> Poison.decode! == true
+
+    response = conn(:get, "/image_iff") |> send_request
+    assert response.resp_body |> Poison.decode! == false
+  end
 end

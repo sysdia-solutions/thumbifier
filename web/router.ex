@@ -18,6 +18,8 @@ defmodule Thumbifier.Router do
 
   scope "/", Thumbifier do
     pipe_through :api
+    get "/", PageController, :list
+    get "/:type", PageController, :show
     post "/", PageController, :create
   end
 
