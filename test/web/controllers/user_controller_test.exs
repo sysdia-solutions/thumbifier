@@ -1,5 +1,6 @@
 defmodule UserControllerTest do
   use Thumbifier.ConnCase
+  import Mock
 
   setup do
     key = "rebel"
@@ -37,6 +38,7 @@ defmodule UserControllerTest do
   defp add_auth_header(conn, secret) do
     put_req_header(conn, "authorization", "Bearer #{secret}")
   end
+  import Mock
 
   test "/show returns unauthorized when no api_key is supplied", %{user_luke_skywalker: user_luke_skywalker} do
     response = conn(:get, "/users/#{user_luke_skywalker.email}") |> send_request
@@ -84,13 +86,17 @@ defmodule UserControllerTest do
   end
 
   test "/create returns a user when a valid email is supplied" do
-    valid_email = "yoda@theforce.com"
-    response = conn(:post, "/users", %{email: valid_email}) |> send_request
-    body = response.resp_body |> Poison.decode!
+    with_mock Thumbifier.Messenger, [account_created: fn(_from, _email, _key) -> :ok end] do
+      valid_email = "yoda@theforce.com"
+      response = conn(:post, "/users", %{email: valid_email}) |> send_request
+      body = response.resp_body |> Poison.decode!
 
-    assert response.status == 201
-    assert body["email"] == valid_email
-    assert body["api_key"] |> String.length == 36
+      assert response.status == 201
+      assert body["email"] == valid_email
+      assert body["api_key"] |> String.length == 36
+
+      assert called Thumbifier.Messenger.account_created("noreply@thumbify.me", body["email"], body["api_key"])
+    end
   end
 
   test "/create returns unprocessable entity when an invalid email is supplied" do

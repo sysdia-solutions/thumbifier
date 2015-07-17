@@ -36,6 +36,14 @@ config :thumbifier, Thumbifier.Repo,
   password: System.get_env("ENV_THUMBIFIER_DB_PASSWORD") || "postgres",
   database: System.get_env("ENV_THUMBIFIER_DB_DATABASE") || "thumbifier_db"
 
+# Configure Email Relay
+config :thumbifier, Thumbifier.Util.Email,
+  hostname: System.get_env("ENV_THUMBIFIER_EMAIL_HOSTNAME") || "",
+  username: System.get_env("ENV_THUMBIFIER_EMAIL_USERNAME") || "",
+  password: System.get_env("ENV_THUMBIFIER_EMAIL_PASSWORD") || "",
+  port: System.get_env("ENV_THUMBIFIER_EMAIL_PORT") || "587" |> String.to_integer,
+  from: System.get_env("ENV_THUMBIFIER_EMAIL_FROM") || ""
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

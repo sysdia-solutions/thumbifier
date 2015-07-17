@@ -17,7 +17,7 @@ defmodule Thumbifier.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [mod: {Thumbifier, []},
-     applications: [:phoenix, :cowboy, :logger, :ecto, :postgrex, :poolboy, :httpoison]]
+     applications: [:phoenix, :cowboy, :logger, :ecto, :postgrex, :poolboy, :httpoison, :mailman]]
   end
 
   # Specifies which paths to compile per environment
@@ -38,6 +38,8 @@ defmodule Thumbifier.Mixfile do
      {:poolboy, "~> 1.4.1"},
      {:mock, "~> 0.1.1"},
      {:sh, "~> 1.1"},
-     {:httpoison, "~> 0.7"}]
+     {:httpoison, "~> 0.7"},
+     {:mailman, "~> 0.1.1"},
+     {:eiconv, github: "zotonic/eiconv"}]
   end
 end

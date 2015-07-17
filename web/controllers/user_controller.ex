@@ -62,6 +62,11 @@ defmodule Thumbifier.UserController do
 
   defp create_response(%{ api_key: key}, conn, email) do
     user = %{email: email, api_key: key}
+
+    Application.get_env(:thumbifier, Thumbifier.Util.Email)
+    |> Keyword.get(:from)
+    |> Thumbifier.Messenger.account_created(email, key)
+
     conn
     |> put_status(:created)
     |> render(user: user)
@@ -75,7 +80,8 @@ defmodule Thumbifier.UserController do
 
   defp show_response(user = %Thumbifier.User{}, conn, _email) do
     conn
-    |> render(user: user,  access_token: Thumbifier.AccessToken.generate |> Thumbifier.AccessToken.new(user.email))
+    |> render(user: user, access_token: Thumbifier.AccessToken.generate
+    |> Thumbifier.AccessToken.new(user.email))
   end
 
   defp show_response(nil, conn, email) do
