@@ -28,4 +28,13 @@ defmodule ConverterTest do
     assert File.exists?(output_path) == true
     File.rm(output_path)
   end
+
+  test "psd - outputs a jpg from a source psd for the given page", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "psd.psd"
+    results = Thumbifier.Convert.Converter.from_psd(file_path, 72, "100x100", 1)
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
 end

@@ -19,6 +19,13 @@ defmodule Thumbifier.Convert.Converter do
     |> resize(quality, size)
   end
 
+  @doc """
+  Convert a PSD to a jpg
+  """
+  def from_psd(file, quality, size, page) do
+    from_pdf(file, quality, size, page)
+  end
+
   defp resize_response(false, file, _quality, _size) do
     {:error, file <> " not found"}
   end

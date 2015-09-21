@@ -26,7 +26,22 @@ defmodule TypesTest do
     assert Thumbifier.Convert.Types.is_pdf?("application/pdf") == true
   end
 
+  test "is_psd?" do
+    assert Thumbifier.Convert.Types.is_psd?("image/photoshop") == true
+    assert Thumbifier.Convert.Types.is_psd?("image/x-photoshop") == true
+    assert Thumbifier.Convert.Types.is_psd?("image/psd") == true
+    assert Thumbifier.Convert.Types.is_psd?("image/vnd.adobe.photoshop") == true
+    assert Thumbifier.Convert.Types.is_psd?("application/photoshop") == true
+    assert Thumbifier.Convert.Types.is_psd?("application/psd") == true
+  end
+
   test "is_supported?" do
+    assert Thumbifier.Convert.Types.is_supported?("image/photoshop") == true
+    assert Thumbifier.Convert.Types.is_supported?("image/x-photoshop") == true
+    assert Thumbifier.Convert.Types.is_supported?("image/psd") == true
+    assert Thumbifier.Convert.Types.is_supported?("image/vnd.adobe.photoshop") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/photoshop") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/psd") == true
     assert Thumbifier.Convert.Types.is_supported?("application/pdf") == true
     assert Thumbifier.Convert.Types.is_supported?("image/jpg") == true
     assert Thumbifier.Convert.Types.is_supported?("image/pjpeg") == true
@@ -68,7 +83,13 @@ defmodule TypesTest do
         "image/x-tif",
         "image/tiff",
         "image/x-tiff",
-        "application/pdf"
+        "application/pdf",
+        "image/photoshop",
+        "image/x-photoshop",
+        "image/psd",
+        "image/vnd.adobe.photoshop",
+        "application/photoshop",
+        "application/psd"
       ]
 
     assert Thumbifier.Convert.Types.all == expected

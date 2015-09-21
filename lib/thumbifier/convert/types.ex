@@ -1,6 +1,8 @@
 defmodule Thumbifier.Convert.Types do
   def all() do
-    basic_image ++ pdf
+    basic_image
+    ++ pdf
+    ++ psd
   end
 
   def is_supported?(type) do
@@ -13,6 +15,10 @@ defmodule Thumbifier.Convert.Types do
 
   def is_pdf?(type) do
     type in pdf
+  end
+
+  def is_psd?(type) do
+    type in psd
   end
 
   defp basic_image() do
@@ -41,5 +47,16 @@ defmodule Thumbifier.Convert.Types do
     [
       "application/pdf"
     ]
+  end
+
+  defp psd() do
+  [
+    "image/photoshop",
+    "image/x-photoshop",
+    "image/psd",
+    "image/vnd.adobe.photoshop",
+    "application/photoshop",
+    "application/psd"
+  ]
   end
 end

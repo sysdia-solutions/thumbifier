@@ -102,4 +102,16 @@ defmodule ProcessorTest do
     fixture = "test/fixtures/files/pdf_thumb.jpg"
     assert image_compare(fixture, result.payload) == true
   end
+
+  test "process - success for psd file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
+    data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "psd.psd"})
+
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
+
+    assert result.status == "ok"
+
+    fixture = "test/fixtures/files/psd_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
+  end
 end
