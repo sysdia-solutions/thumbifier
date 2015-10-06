@@ -3,6 +3,7 @@ defmodule Thumbifier.Convert.Types do
     basic_image
     ++ pdf
     ++ psd
+    ++ video
   end
 
   def is_supported?(type) do
@@ -19,6 +20,10 @@ defmodule Thumbifier.Convert.Types do
 
   def is_psd?(type) do
     type in psd
+  end
+
+  def is_video?(type) do
+    type in video
   end
 
   defp basic_image() do
@@ -58,5 +63,17 @@ defmodule Thumbifier.Convert.Types do
     "application/photoshop",
     "application/psd"
   ]
+  end
+
+  defp video() do
+    [
+      "video/x-ms-asf",
+      "video/x-ms-wmv",
+      "video/msvideo",
+      "video/x-msvideo",
+      "video/mpeg",
+      "video/x-mpeg",
+      "video/mp4"
+    ]
   end
 end

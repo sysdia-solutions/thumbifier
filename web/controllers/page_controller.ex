@@ -14,7 +14,7 @@ defmodule Thumbifier.PageController do
   end
 
   def create(conn, params) do
-    post_optional_params = %{"personal_reference" => "", "quality" => "72", "dimensions" => "100x100", "page" => "1", "frame" => "1"}
+    post_optional_params = %{"personal_reference" => "", "quality" => "72", "dimensions" => "100x100", "page" => "1", "frame" => "00:00:01"}
 
     params = Map.merge(post_optional_params, params)
     create_check_access_token(conn, params)

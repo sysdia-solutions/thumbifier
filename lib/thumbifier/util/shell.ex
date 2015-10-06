@@ -26,4 +26,11 @@ defmodule Thumbifier.Util.Shell do
   def convert(params) do
     apply(Sh, :convert, params)
   end
+
+  @doc """
+  Call the ffmpeg command line function
+  """
+  def ffmpeg(params) do
+    apply(Sh, :ffmpeg, params)
+  end
 end

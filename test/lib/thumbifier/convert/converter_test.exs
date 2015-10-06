@@ -37,4 +37,13 @@ defmodule ConverterTest do
     assert File.exists?(output_path) == true
     File.rm(output_path)
   end
+
+  test "video - outputs a jpg from a source video for the given frame", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "mp4.mp4"
+    results = Thumbifier.Convert.Converter.from_video(file_path, 72, "100x100", "00:00:03")
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
 end

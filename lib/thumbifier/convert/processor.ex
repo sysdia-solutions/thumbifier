@@ -62,6 +62,9 @@ defmodule Thumbifier.Convert.Processor do
       Thumbifier.Convert.Types.is_psd?(mime_type) ->
         Thumbifier.Convert.Converter.from_pdf(source, data["quality"], data["dimensions"], data["page"])
 
+      Thumbifier.Convert.Types.is_video?(mime_type) ->
+        Thumbifier.Convert.Converter.from_video(source, data["quality"], data["dimensions"], data["frame"])
+
       true ->
         {:error, "mime-type " <> mime_type <> " not supported"}
     end

@@ -7,7 +7,7 @@ formats into resized jpgs.
 
 The Thumbifier Engine is a RESTful service that allows an authenticated
 user to provide a URL to a media file, convert it into a jpg and
-resiz the output to the provided dimensions. The output jpg is then
+resize the output to the provided dimensions. The output jpg is then
 POSTed to a provided callback URL for consumption.
 
 The Thumbifier Engine uses pooled processes to run the conversion
@@ -25,6 +25,7 @@ The Thumbifier Engine requires the following:
 * Elixir 1.0.4
 * ImageMagick 6+
 * PostgresSQL 9+ database
+* FFmpeg
 
 ## Getting Started
 
@@ -223,6 +224,7 @@ should complete eventually.
       * `personal_reference` - [opt] A useful reference to the POSTed
         result to the original service call
       * `page` - [opt] The page of the input file to convert
+      * `frame` - [opt] The frame of the video file to convert (hh:mm:ss)
     * Returns [201 Created] - JSON encoded response GUID
 
 ### Users
@@ -463,6 +465,13 @@ route passing the following form fields to the route:
     a single page. The page option allows to specify the page from the
     input file to use in the conversion process. The page field will
     default to `1` if no value is provided.
+* frame
+  * Video input file formats require a specific frame to be supplied as
+    this will be the frame from the video used to create the output jpg
+    file. The frame field is supplied in this format `hh:mm:ss` so if
+    the required frame is at 1 minute 32 seconds of the video file then
+    the frame would be `00:01:32`. The frame field will default to `1`
+    if no value is provided.
 
 ###### Request Failure
 
@@ -590,6 +599,12 @@ There are a complete set of `ExUnit` tests that ensure the engine is
 working as expected.
 
 `mix test`
+
+  > #### Note
+  > The tests currently rely on an internet connection as they download
+  > remote fixtures to test various file formats. As some of these
+  > formats are large file size files, then the tests can take longer to
+  > run on slower network connections.
 
 ## License
 

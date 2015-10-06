@@ -89,7 +89,14 @@ defmodule TypesTest do
         "image/psd",
         "image/vnd.adobe.photoshop",
         "application/photoshop",
-        "application/psd"
+        "application/psd",
+        "video/x-ms-asf",
+        "video/x-ms-wmv",
+        "video/msvideo",
+        "video/x-msvideo",
+        "video/mpeg",
+        "video/x-mpeg",
+        "video/mp4"
       ]
 
     assert Thumbifier.Convert.Types.all == expected

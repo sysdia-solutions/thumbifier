@@ -26,6 +26,27 @@ defmodule Thumbifier.Convert.Converter do
     from_pdf(file, quality, size, page)
   end
 
+  @doc """
+  Convert a video file frame to a jpg
+  """
+  def from_video(file, quality, size, frame) do
+    if frame == "auto" do
+      frame = "00:00:01"
+    end
+
+    output_dir =  System.tmp_dir! <> "/video-convert-" <> Ecto.UUID.generate <> "/"
+    File.mkdir(output_dir)
+    output_file = output_dir <> "video.jpg"
+
+    ["-i", file, "-ss", frame, "-vframes", "1", output_file]
+    |> Thumbifier.Util.Shell.ffmpeg
+    jpg = resize(output_file, quality, size)
+
+    File.rm_rf(output_dir)
+
+    jpg
+  end
+
   defp resize_response(false, file, _quality, _size) do
     {:error, file <> " not found"}
   end
