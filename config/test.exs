@@ -6,8 +6,8 @@ config :thumbifier, Thumbifier.Endpoint,
   http: [port: 4001],
   server: false
 
-# Print only warnings and errors during test
-config :logger, level: :warn
+# Print only errors during test
+config :logger, level: :error
 
 # Configure your database
 config :thumbifier, Thumbifier.Repo,
