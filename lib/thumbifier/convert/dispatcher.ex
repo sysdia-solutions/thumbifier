@@ -6,7 +6,7 @@ defmodule Thumbifier.Convert.Dispatcher do
   defp parallel(data) do
     :poolboy.transaction(
       :thumbifier,
-      fn(pid) -> :gen_server.call(pid, data) end,
+      fn(pid) -> Thumbifier.Convert.Worker.process_job(pid, data) end,
       :infinity
     )
   end

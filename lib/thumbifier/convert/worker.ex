@@ -16,4 +16,8 @@ defmodule Thumbifier.Convert.Worker do
     |> Thumbifier.Util.URI.post(data["callback_url"])
     {:reply, [], state}
   end
+
+  def process_job(pid, data) do
+    :gen_server.call(pid, data)
+  end
 end
