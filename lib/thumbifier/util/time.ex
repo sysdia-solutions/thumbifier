@@ -17,6 +17,10 @@ defmodule Thumbifier.Util.Time do
     |> Ecto.DateTime.from_erl
   end
 
+  def ecto_to_tuple(date) do
+    Ecto.DateTime.to_erl(date)
+  end
+
   defp timex_to_tuple(date) do
     {
       {date.year, date.month, date.day},
