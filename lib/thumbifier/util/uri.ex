@@ -23,7 +23,7 @@ defmodule Thumbifier.Util.URI do
   """
   def details(uri) do
     valid?(uri)
-    |> details_response(uri)
+    |> file_details(uri)
   end
 
   @doc """
@@ -31,24 +31,40 @@ defmodule Thumbifier.Util.URI do
   """
   def download(uri, save_to) do
     valid?(uri)
-    |> download_response(uri, save_to)
+    |> file_download(uri, save_to)
   end
 
-  defp download_response(false, uri, _save_to) do
+  defp file_download(false, uri, _save_to) do
     {:error, uri <> " is not a valid URI"}
   end
 
-  defp download_response(true, uri, save_to) do
+  defp file_download(true, uri, save_to) do
     Thumbifier.Util.Shell.wget(uri, save_to)
+    |> download_response(save_to)
+  end
+
+  defp download_response({:error, message}, _save_to) do
+    {:error, message}
+  end
+
+  defp download_response(_results, save_to) do
     {:ok, save_to}
   end
 
-  defp details_response(false, uri) do
+  defp file_details(false, uri) do
     {:error, uri <> " is not a valid URI"}
   end
 
-  defp details_response(true, uri) do
-    results = Thumbifier.Util.Shell.wget(uri)
+  defp file_details(true, uri) do
+    Thumbifier.Util.Shell.wget(uri)
+    |> details_response()
+  end
+
+  defp details_response({:error, message}) do
+    {:error, message}
+  end
+
+  defp details_response(results) do
     {:ok, size: uri_size(results), type: uri_type(results)}
   end
 

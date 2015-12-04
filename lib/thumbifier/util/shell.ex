@@ -3,14 +3,14 @@ defmodule Thumbifier.Util.Shell do
   Return the type and file size of the given URI
   """
   def wget(uri) do
-    Sh.wget "--spider", "-v", uri
+    try do: (Sh.wget "--spider", "-v", uri), rescue: (_e in Sh.AbnormalExit -> {:error, "#{ uri } not found"})
   end
 
   @doc """
   Download the given URI and save to the given path
   """
   def wget(uri, save_to) do
-    Sh.wget "-O", save_to, uri
+    try do: (Sh.wget "-O", save_to, uri), rescue: (_e in Sh.AbnormalExit -> {:error, "#{ uri } not found"})
   end
 
   @doc """
