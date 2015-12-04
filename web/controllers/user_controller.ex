@@ -1,40 +1,49 @@
+require Logger
+
 defmodule Thumbifier.UserController do
   use Thumbifier.Web, :controller
 
   plug :action
 
   def show(conn, %{"email" => email}) do
+    Logger.debug("Showing details for user #{ email}")
     Thumbifier.User.find(%{email: email})
     |> show_response(conn, email)
   end
 
   def create(conn, %{ "email" => email }) do
+    Logger.info("Creating user for email #{ email }")
     Thumbifier.User.new(%{email: email})
     |> create_response(conn, email)
   end
 
   def delete(conn, %{ "email" => email }) do
+    Logger.info("Deleting user for email #{ email }")
     Thumbifier.User.delete(%{email: email})
     |> delete_response(conn, email)
   end
 
   def update(conn, %{ "email" => email, "new_email" => new_email }) do
+    Logger.info("Updating user for email #{ email }")
     Thumbifier.User.find(%{email: email})
     |> update_email(conn, email, new_email)
   end
 
   defp update_email(user = %Thumbifier.User{}, conn, current_email, new_email) do
+    Logger.info("Updating user: old email = #{ current_email } / new email = #{ new_email }")
     Thumbifier.User.update_email(user, %{new_email: new_email})
     |> update_email_response(conn, current_email, new_email)
   end
 
   defp update_email(nil, conn, current_email, _new_email) do
+    Logger.warn("Failed updating user email for #{ current_email } - User not found")
     conn
     |> put_status(:not_found)
     |> render(error: not_found_error("User", current_email))
   end
 
   defp update_email_response(user = %Thumbifier.User{}, conn, previous_email, _new_email) do
+    Logger.info("Updated user email successfully")
     user = %{previous_email: previous_email, current_email: user.email}
     conn
     |> put_status(:ok)
@@ -48,6 +57,7 @@ defmodule Thumbifier.UserController do
   end
 
   defp delete_response(true, conn, email) do
+    Logger.info("Deleted user successfully")
     Thumbifier.AccessToken.purge(%{user_email: email})
     conn
     |> put_status(:no_content)
@@ -55,6 +65,7 @@ defmodule Thumbifier.UserController do
   end
 
   defp delete_response(false, conn, email) do
+    Logger.warn("Failed deleting user #{ email } - User not found")
     conn
     |> put_status(:not_found)
     |> render(error: not_found_error("User", email))

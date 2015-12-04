@@ -1,10 +1,14 @@
+require Logger
+
 defmodule Thumbifier.Convert.Processor do
   def process(max_file_size, data) do
+    Logger.info("Received job: " <> data["response_id"] <> " - personal reference: " <> data["personal_reference"])
     Thumbifier.Util.URI.details(data["media_url"])
     |> process_remote_file_details(data, max_file_size)
   end
 
   def callback_payload(%{status: status, payload: payload}, data) do
+    Logger.info("[Status: #{ status }] Callback processed for job: " <> data["response_id"] <> " - personal reference: " <> data["personal_reference"])
     { :form,
       [
         status: status,
@@ -16,6 +20,7 @@ defmodule Thumbifier.Convert.Processor do
   end
 
   defp process_remote_file_details({:error, message}, _data, _max_file_size) do
+    Logger.warn(message)
     %{status: "error", payload: "[0001]" <> message}
   end
 
@@ -30,6 +35,7 @@ defmodule Thumbifier.Convert.Processor do
   end
 
   defp process_remote_file(false, _type, _data) do
+    Logger.warn("File limit exceeded")
     %{status: "error", payload: "[0002] File limit exceeded"}
   end
 
@@ -52,6 +58,7 @@ defmodule Thumbifier.Convert.Processor do
   end
 
   defp process_convert(mime_type, source, data) do
+    Logger.info("Processing MimeType: #{ mime_type }")
     cond do
       Thumbifier.Convert.Types.is_basic_image?(mime_type) ->
         Thumbifier.Convert.Converter.resize(source, data["quality"], data["dimensions"])
@@ -72,6 +79,7 @@ defmodule Thumbifier.Convert.Processor do
   end
 
   defp process_output({:error, message}, _data) do
+    Logger.warn(message)
     %{status: "error", payload: "[0003] " <> message}
   end
 

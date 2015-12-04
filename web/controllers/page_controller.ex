@@ -1,3 +1,5 @@
+require Logger
+
 defmodule Thumbifier.PageController do
   use Thumbifier.Web, :controller
 
@@ -27,6 +29,7 @@ defmodule Thumbifier.PageController do
   end
 
   defp create_check_limit(nil, conn, params) do
+    Logger.warn("Access Token is not authorized")
     conn
     |> put_status(:unauthorized)
     |> render(error: %Thumbifier.Error.Unauthorized{resource: "AccessToken", id: params["access_token"]})
@@ -41,6 +44,7 @@ defmodule Thumbifier.PageController do
   end
 
   defp create_validate_url(false, conn, _params, user) do
+    Logger.warn("User #{ user.email } has exceeded requests: Current = #{ user.usage_counter } - Limit = #{ user.usage_limit }")
     conn
     |> put_status(:too_many_requests)
     |> render(error: %Thumbifier.Error.TooManyRequests{resource: "User", id: to_string(user.usage_counter) <> "/" <> to_string(user.usage_limit)})
@@ -51,7 +55,8 @@ defmodule Thumbifier.PageController do
     |> create_process(conn, params, user)
   end
 
-  defp create_process(false, conn, params, _user) do
+  defp create_process(false, conn, params, user) do
+    Logger.warn("User #{ user.email } provided an invalid medial url: " <> params["media_url"])
     conn
     |> put_status(:bad_request)
     |> render(error: %Thumbifier.Error.BadRequest{resource: "Request", id: params["media_url"]})
