@@ -2,7 +2,7 @@ defmodule AccessTokenTest do
   use Thumbifier.ConnCase
 
   setup do
-    access_token =
+    {:ok, access_token} =
       %Thumbifier.AccessToken{
         user_email: "luke@skywalker.com",
         access_token: "rebels"

@@ -87,7 +87,7 @@ defmodule Thumbifier.User do
     model
     |> cast(params, @required_fields, @optional_fields)
     |> validate_format(:email, ~r/@/)
-    |> validate_unique(:email, on: Thumbifier.Repo)
+    |> unique_constraint(:email)
   end
 
   def hash(string) do
@@ -106,12 +106,24 @@ defmodule Thumbifier.User do
 
   defp persist(true, changeset, :insert, options) do
     Thumbifier.Repo.insert(changeset)
-    %{email: options.email, api_key: options.api_key}
+    |> persist_results(:insert, options)
   end
 
-  defp persist(true, changeset, :update, _options) do
+  defp persist(true, changeset, :update, options) do
     Thumbifier.Repo.update(changeset)
-    find(%{email: get_change(changeset, :email, changeset.model.email)})
+    |> persist_results(:update, options)
+  end
+
+  defp persist_results({:error, changeset}, _type, _original_data) do
+    %{error: changeset.errors}
+  end
+
+  defp persist_results({:ok, user}, :insert, original_data) do
+    %{email: user.email, api_key: original_data.api_key}
+  end
+
+  defp persist_results({:ok, user}, :update, _original_data) do
+    find(%{email: user.email})
   end
 
   defp remove(user = %Thumbifier.User{}) do

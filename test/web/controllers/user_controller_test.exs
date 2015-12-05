@@ -4,7 +4,7 @@ defmodule UserControllerTest do
 
   setup do
     key = "rebel"
-    user_luke_skywalker =
+    {:ok, user_luke_skywalker} =
       %Thumbifier.User{
         email: "Luke@Skywalker.com",
         api_key: key |> Thumbifier.User.hash,
@@ -15,7 +15,7 @@ defmodule UserControllerTest do
       }
       |> Thumbifier.Repo.insert
 
-    user_boba_fett =
+    {:ok, user_boba_fett} =
       %Thumbifier.User{
         email: "Boba@Fett.com",
         api_key: key |> Thumbifier.User.hash,
@@ -38,7 +38,6 @@ defmodule UserControllerTest do
   defp add_auth_header(conn, secret) do
     put_req_header(conn, "authorization", "Bearer #{secret}")
   end
-  import Mock
 
   test "/show returns unauthorized when no api_key is supplied", %{user_luke_skywalker: user_luke_skywalker} do
     response = conn(:get, "/users/#{user_luke_skywalker.email}") |> send_request

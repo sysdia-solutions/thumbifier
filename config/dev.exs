@@ -11,13 +11,14 @@ config :thumbifier, Thumbifier.Endpoint,
   debug_errors: true,
   code_reloader: true,
   cache_static_lookup: false,
+  check_origin: false,
   watchers: []
 
 # Watch static and templates for browser reloading.
 config :thumbifier, Thumbifier.Endpoint,
   live_reload: [
     patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif)$},
+      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex)$}
     ]
@@ -25,3 +26,8 @@ config :thumbifier, Thumbifier.Endpoint,
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "$date $time [$level] $message\n"
+
+config :phoenix, :stacktrace_depth, 20
+
+config :thumbifier, Thumbifier.Repo,
+  pool_size: 10

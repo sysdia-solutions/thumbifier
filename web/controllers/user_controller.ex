@@ -3,8 +3,6 @@ require Logger
 defmodule Thumbifier.UserController do
   use Thumbifier.Web, :controller
 
-  plug :action
-
   def show(conn, %{"email" => email}) do
     Logger.debug("Showing details for user #{ email}")
     Thumbifier.User.find(%{email: email})

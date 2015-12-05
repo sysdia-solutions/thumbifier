@@ -16,7 +16,7 @@ config :thumbifier, Thumbifier.Endpoint,
   url: [host: "localhost"],
   root: Path.expand("..", __DIR__),
   secret_key_base: System.get_env("ENV_THUMBIFIER_SECRET_KEY_BASE") || "iZqydsfgSlkqOK8KQN2KYtNLYRHVFgbeBUja/ktWJffOHyRfy5k94PPGS0L4+1ON",
-  debug_errors: false,
+  render_errors: [accepts: ~w(html, json)],
   pubsub: [name: Thumbifier.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

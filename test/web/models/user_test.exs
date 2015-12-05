@@ -3,7 +3,7 @@ defmodule UserTest do
 
   setup do
     key_luke_skywalker = "rebel"
-    user_luke_skywalker =
+    {:ok, user_luke_skywalker} =
       %Thumbifier.User{
         email: "Luke@Skywalker.com",
         api_key: key_luke_skywalker |> Thumbifier.User.hash,
@@ -14,7 +14,7 @@ defmodule UserTest do
       }
       |> Thumbifier.Repo.insert
 
-    user_darth_vader =
+    {:ok, user_darth_vader} =
       %Thumbifier.User{
         email: "Darth@Vader.com",
         api_key: "sith" |> Thumbifier.User.hash,
@@ -25,7 +25,7 @@ defmodule UserTest do
       }
       |> Thumbifier.Repo.insert
 
-    user_darth_maul =
+    {:ok, user_darth_maul} =
       %Thumbifier.User{
         email: "Darth@Maul.com",
         api_key: "republican" |> Thumbifier.User.hash,

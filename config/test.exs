@@ -11,5 +11,4 @@ config :logger, level: :error
 
 # Configure your database
 config :thumbifier, Thumbifier.Repo,
-  size: 1,
-  max_overflow: false
+  pool: Ecto.Adapters.SQL.Sandbox

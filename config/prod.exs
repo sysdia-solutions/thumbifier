@@ -9,7 +9,7 @@ use Mix.Config
 config :thumbifier, Thumbifier.Endpoint,
   http: [port: {:system, "PORT"}],
   server: true,
-  url: [host: "example.com"]
+  url: [host: "example.com", port: 80]
 
 # ## SSL Support
 #
@@ -39,3 +39,6 @@ config :logger, level: :info
 # start per endpoint:
 #
 #     config :thumbifier, Thumbifier.Endpoint, server: true
+
+config :thumbifier, Thumbifier.Repo,
+  pool_size: 20

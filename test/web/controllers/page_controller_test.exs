@@ -3,7 +3,7 @@ defmodule Thumbifier.PageControllerTest do
   import Mock
 
   setup do
-    user_luke_skywalker =
+    {:ok, user_luke_skywalker} =
     %Thumbifier.User{
       email: "Luke@Skywalker.com",
       api_key: "key" |> Thumbifier.User.hash,
@@ -14,7 +14,7 @@ defmodule Thumbifier.PageControllerTest do
     }
     |> Thumbifier.Repo.insert
 
-    user_boba_fett =
+    {:ok, user_boba_fett} =
     %Thumbifier.User{
       email: "Boba@Fett.com",
       api_key: "key" |> Thumbifier.User.hash,
@@ -25,7 +25,7 @@ defmodule Thumbifier.PageControllerTest do
     }
     |> Thumbifier.Repo.insert
 
-    user_han_solo =
+    {:ok, user_han_solo} =
     %Thumbifier.User{
       email: "han@solo.com",
       api_key: "key" |> Thumbifier.User.hash,
@@ -36,18 +36,18 @@ defmodule Thumbifier.PageControllerTest do
     }
     |> Thumbifier.Repo.insert
 
-    access_token_luke_skywalker = %Thumbifier.AccessToken{user_email: user_luke_skywalker.email, access_token: "jedi"}
-                               |>Thumbifier.Repo.insert
+    {:ok, access_token_luke_skywalker} = %Thumbifier.AccessToken{user_email: user_luke_skywalker.email, access_token: "jedi"}
+                                         |>Thumbifier.Repo.insert
 
-    access_token_boba_fett = %Thumbifier.AccessToken{user_email: user_boba_fett.email, access_token: "bounty_hunter"}
-                          |>Thumbifier.Repo.insert
+    {:ok, access_token_boba_fett} = %Thumbifier.AccessToken{user_email: user_boba_fett.email, access_token: "bounty_hunter"}
+                                    |>Thumbifier.Repo.insert
 
-    access_token_han_solo = %Thumbifier.AccessToken{user_email: user_han_solo.email, access_token: "smuggler"}
-                         |>Thumbifier.Repo.insert
+    {:ok, access_token_han_solo} = %Thumbifier.AccessToken{user_email: user_han_solo.email, access_token: "smuggler"}
+                                   |>Thumbifier.Repo.insert
 
     expired_time = Thumbifier.Util.Time.ecto_now |> Thumbifier.Util.Time.ecto_shift(mins: -10)
-    access_token_darth_maul = %Thumbifier.AccessToken{user_email: "darth@maul.com", access_token: "dead_sith", expires_at: expired_time}
-                         |>Thumbifier.Repo.insert
+    {:ok, access_token_darth_maul} = %Thumbifier.AccessToken{user_email: "darth@maul.com", access_token: "dead_sith", expires_at: expired_time}
+                                     |>Thumbifier.Repo.insert
 
     {:ok,
       user_luke_skywalker: user_luke_skywalker,

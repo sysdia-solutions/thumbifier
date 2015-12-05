@@ -26,8 +26,7 @@ defmodule Thumbifier.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_thumbifier_key",
-    signing_salt: "huUkHIm7",
-    encryption_salt: "6LJwC9FD"
+    signing_salt: "huUkHIm7"
 
-  plug :router, Thumbifier.Router
+  plug Thumbifier.Router
 end

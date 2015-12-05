@@ -3,8 +3,6 @@ require Logger
 defmodule Thumbifier.PageController do
   use Thumbifier.Web, :controller
 
-  plug :action
-
   def list(conn, _params) do
     conn
     |> render(ok: Thumbifier.Convert.Types.all)
