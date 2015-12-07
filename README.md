@@ -23,8 +23,8 @@ The Thumbifier Engine requires the following:
 
 * Erlang/OTP 0.17 [erts-6.4]
 * Elixir 1.0.4
-* ImageMagick 6+
 * PostgresSQL 9+ database
+* ImageMagick 6+
 * FFmpeg
 
 ## Getting Started
@@ -145,6 +145,37 @@ The following instructions show how to create a release using exrm:
     * `~/thumbifier/bin/thumbifier rpc Elixir.Ecto.Storage up "['Elixir.Thumbifier.Repo']".`
     * `~/thumbifier/bin/thumbifier rpc Elixir.Ecto.Migrator run "['Elixir.Thumbifier.Repo', <<\"~/thumbifier/lib/thumbifier-0.0.1/priv/repo/migrations\">>, up, [{all, true}]]."`
   * To stop the service if needed: `~/thumbifier/bin/thumbifier stop`
+
+#### Quick Docker Deployment
+
+A simple way to test deployment is to use the provided docker
+container (requires Docker 0.8+). The docker container builds with
+all of the required dependencies except a database server.
+
+To utilise the docker container:
+
+  * Ensure a `config/prod.secret.exs` file exists correctly configured.
+    * Requires database configuration for production with the correct
+      `hostname` as it won't be `localhost` inside the container.
+    * Requires the http port setting to `port 80`
+
+      ```
+      config :thumbifier, Thumbifier.Endpoint,
+        http: [port: 80]
+      ```
+  * Run the Ecto migrations for production `MIX_ENV=prod mix ecto.migrate`
+  * Start the docker container `./docker-deploy.sh start`
+
+    _note: this command may require being run as sudo_
+
+The script should run the `exrm` build and release process then start
+the docker build process adding the build to the container.
+
+Once the process is complete, the service should be accessible by
+visiting `http://127.0.0.1` as docker is configured to map the host
+port 80 to the docker container port 80 (where the service is running).
+
+To terminate the docker container, simply run `./docker-deploy.sh kill`
 
 ## Using the Thumbifier
 
