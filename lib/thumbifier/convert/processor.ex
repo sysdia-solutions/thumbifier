@@ -21,7 +21,7 @@ defmodule Thumbifier.Convert.Processor do
 
   defp process_remote_file_details({:error, message}, _data, _max_file_size) do
     Logger.warn(message)
-    %{status: "error", payload: "[0001]" <> message}
+    %{status: "error", payload: "[0001] " <> message}
   end
 
   defp process_remote_file_details({:ok, details}, data, max_file_size) do
