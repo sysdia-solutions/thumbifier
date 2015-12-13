@@ -9,7 +9,8 @@ use Mix.Config
 config :thumbifier,
   poolboy_size: System.get_env("ENV_THUMBIFIER_POOLBOY_SIZE") || "2" |> String.to_integer,
   poolboy_max_overflow: System.get_env("ENV_THUMBIFIER_POOLBOY_MAX_OVERFLOW") || "1" |> String.to_integer,
-  max_file_size: System.get_env("ENV_THUMBIFIER_MAX_FILE_SIZE") || "1000000000" |> String.to_integer
+  max_file_size: System.get_env("ENV_THUMBIFIER_MAX_FILE_SIZE") || "1000000000" |> String.to_integer,
+  usage_reset_timeout: System.get_env("ENV_THUMBIFIER_USAGE_RESET_TIMEOUT") || "10" |> String.to_integer
 
 # Configures the endpoint
 config :thumbifier, Thumbifier.Endpoint,

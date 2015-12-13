@@ -139,7 +139,7 @@ defmodule Thumbifier.User do
     reset_at = user.usage_reset_at
                |> Thumbifier.Util.Time.ecto_to_tuple()
     reset_trigger = Thumbifier.Util.Time.ecto_now
-                    |> Thumbifier.Util.Time.ecto_shift(mins: -10)
+                    |> Thumbifier.Util.Time.ecto_shift(mins: -Application.get_env(:thumbifier, :usage_reset_timeout))
                     |> Thumbifier.Util.Time.ecto_to_tuple()
     reset_trigger >= reset_at
   end

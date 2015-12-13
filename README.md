@@ -81,6 +81,8 @@ The configuration fields are as follows (including the ENV name):
     * [int ]Number of reserve converter workers to be on standby
   * __max_file_size__ `ENV_THUMBIFIER_MAX_FILE_SIZE`
     * [int] Maximum file size of the media URL that will be processed
+  * __usage_reset_timeout__ `ENV_THUMBIFIER_USAGE_RESET_TIMEOUT`
+    * [int] Time in minutes required to have passed before usage_counter is reset
 * config :thumbifier, Thumbifier.Endpoint
   * __secret_key_base__ `ENV_THUMBIFIER_SECRET_KEY_BASE`
     * [binary] A unique key for encryption, part of Phoenix Framework
