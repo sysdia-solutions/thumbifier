@@ -65,6 +65,33 @@ defmodule Thumbifier.Convert.Converter do
     jpg
   end
 
+  def from_document(file, quality, size, page) do
+    from_office(file, quality, size, page)
+  end
+
+  def from_spreadsheet(file, quality, size, page) do
+    from_office(file, quality, size, page)
+  end
+
+  def from_presentation(file, quality, size, page) do
+    from_office(file, quality, size, page)
+  end
+
+  def from_office(file, quality, size, page) do
+    output_dir =  System.tmp_dir! <> "/office-convert-" <> Ecto.UUID.generate <> "/"
+    File.mkdir(output_dir)
+    output_file = output_dir <> "office.pdf"
+
+    ["-f", "pdf", "-o", output_file, file]
+    |> Thumbifier.Util.Shell.unoconv
+
+    jpg = from_pdf(output_file, quality, size, page)
+
+    File.rm_rf(output_dir)
+
+    jpg
+  end
+
   defp resize_response(false, file, _quality, _size) do
     {:error, file <> " not found"}
   end

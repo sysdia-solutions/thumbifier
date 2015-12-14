@@ -5,6 +5,9 @@ defmodule Thumbifier.Convert.Types do
     ++ psd
     ++ video
     ++ website
+    ++ document
+    ++ spreadsheet
+    ++ presentation
   end
 
   def is_supported?(type) do
@@ -29,6 +32,18 @@ defmodule Thumbifier.Convert.Types do
 
   def is_website?(type) do
     type in website
+  end
+
+  def is_document?(type) do
+    type in document
+  end
+
+  def is_spreadsheet?(type) do
+    type in spreadsheet
+  end
+
+  def is_presentation?(type) do
+    type in presentation
   end
 
   defp basic_image() do
@@ -85,6 +100,31 @@ defmodule Thumbifier.Convert.Types do
   defp website() do
     [
       "website"
+    ]
+  end
+
+  defp document() do
+    [
+      "application/msword",
+      "application/vnd.oasis.opendocument.text",
+      "application/x-vnd.oasis.opendocument.text"
+    ]
+  end
+
+  defp spreadsheet() do
+    [
+      "application/vnd.ms-excel",
+      "application/vnd.oasis.opendocument.spreadsheet",
+      "application/x-vnd.oasis.opendocument.spreadsheet",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ]
+  end
+
+  defp presentation() do
+    [
+      "application/vnd.ms-powerpoint",
+      "application/vnd.oasis.opendocument.presentation",
+      "application/x-vnd.oasis.opendocument.presentation"
     ]
   end
 end

@@ -138,4 +138,40 @@ defmodule ProcessorTest do
     fixture = "test/fixtures/files/website_thumb.jpg"
     assert image_compare(fixture, result.payload) == true
   end
+
+  test "process - success for doc file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
+    data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "doc.doc", "page" => "1"})
+
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
+
+    assert result.status == "ok"
+
+    fixture = "test/fixtures/files/doc_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
+  end
+
+  test "process - success for xls file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
+    data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "xls.xls", "page" => "1"})
+
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
+
+    assert result.status == "ok"
+
+    fixture = "test/fixtures/files/xls_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
+  end
+
+  test "process - success for ppt file format", %{data: data, remote_fixtures_path: remote_fixtures_path} do
+    data = Map.merge(data, %{"media_url" => remote_fixtures_path <> "ppt.ppt", "page" => "1"})
+
+    result = Application.get_env(:thumbifier, :max_file_size)
+    |> Thumbifier.Convert.Processor.process(data)
+
+    assert result.status == "ok"
+
+    fixture = "test/fixtures/files/ppt_thumb.jpg"
+    assert image_compare(fixture, result.payload) == true
+  end
 end

@@ -75,6 +75,15 @@ defmodule Thumbifier.Convert.Processor do
       Thumbifier.Convert.Types.is_website?(mime_type) ->
         Thumbifier.Convert.Converter.from_website(source, data["quality"], data["dimensions"])
 
+      Thumbifier.Convert.Types.is_document?(mime_type) ->
+        Thumbifier.Convert.Converter.from_document(source, data["quality"], data["dimensions"], data["page"])
+
+      Thumbifier.Convert.Types.is_spreadsheet?(mime_type) ->
+        Thumbifier.Convert.Converter.from_spreadsheet(source, data["quality"], data["dimensions"], data["page"])
+
+      Thumbifier.Convert.Types.is_presentation?(mime_type) ->
+        Thumbifier.Convert.Converter.from_presentation(source, data["quality"], data["dimensions"], data["page"])
+
       true ->
         {:error, "mime-type " <> mime_type <> " not supported"}
     end

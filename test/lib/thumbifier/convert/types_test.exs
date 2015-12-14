@@ -39,6 +39,25 @@ defmodule TypesTest do
     assert Thumbifier.Convert.Types.is_website?("website") == true
   end
 
+  test "is_document?" do
+    assert Thumbifier.Convert.Types.is_document?("application/msword") == true
+    assert Thumbifier.Convert.Types.is_document?("application/vnd.oasis.opendocument.text") == true
+    assert Thumbifier.Convert.Types.is_document?("application/x-vnd.oasis.opendocument.text") == true
+  end
+
+  test "is_spreadsheet?" do
+    assert Thumbifier.Convert.Types.is_spreadsheet?("application/vnd.ms-excel") == true
+    assert Thumbifier.Convert.Types.is_spreadsheet?("application/vnd.oasis.opendocument.spreadsheet") == true
+    assert Thumbifier.Convert.Types.is_spreadsheet?("application/x-vnd.oasis.opendocument.spreadsheet") == true
+    assert Thumbifier.Convert.Types.is_spreadsheet?("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") == true
+  end
+
+  test "is_presentation?" do
+    assert Thumbifier.Convert.Types.is_presentation?("application/vnd.ms-powerpoint") == true
+    assert Thumbifier.Convert.Types.is_presentation?("application/vnd.oasis.opendocument.presentation") == true
+    assert Thumbifier.Convert.Types.is_presentation?("application/x-vnd.oasis.opendocument.presentation") == true
+  end
+
   test "is_supported?" do
     assert Thumbifier.Convert.Types.is_supported?("image/photoshop") == true
     assert Thumbifier.Convert.Types.is_supported?("image/x-photoshop") == true
@@ -66,6 +85,16 @@ defmodule TypesTest do
     assert Thumbifier.Convert.Types.is_supported?("image/tiff") == true
     assert Thumbifier.Convert.Types.is_supported?("image/x-tiff") == true
     assert Thumbifier.Convert.Types.is_supported?("website") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/msword") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.oasis.opendocument.text") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/x-vnd.oasis.opendocument.text") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.ms-excel") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.oasis.opendocument.spreadsheet") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/x-vnd.oasis.opendocument.spreadsheet") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.ms-powerpoint") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/vnd.oasis.opendocument.presentation") == true
+    assert Thumbifier.Convert.Types.is_supported?("application/x-vnd.oasis.opendocument.presentation") == true
   end
 
   test "all" do
@@ -102,7 +131,17 @@ defmodule TypesTest do
         "video/mpeg",
         "video/x-mpeg",
         "video/mp4",
-        "website"
+        "website",
+        "application/msword",
+        "application/vnd.oasis.opendocument.text",
+        "application/x-vnd.oasis.opendocument.text",
+        "application/vnd.ms-excel",
+        "application/vnd.oasis.opendocument.spreadsheet",
+        "application/x-vnd.oasis.opendocument.spreadsheet",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.oasis.opendocument.presentation",
+        "application/x-vnd.oasis.opendocument.presentation"
       ]
 
     assert Thumbifier.Convert.Types.all == expected

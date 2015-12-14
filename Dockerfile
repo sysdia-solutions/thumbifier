@@ -11,6 +11,8 @@ RUN mv wkhtmltopdf-amd64 /opt/wkhtmltopdf/wkhtmltopdf-0.9.9
 RUN ln -s /opt/wkhtmltopdf/wkhtmltopdf-0.9.9 /opt/wkhtmltopdf/latest
 RUN ln -s /opt/wkhtmltopdf/latest /usr/bin/wkhtmltopdf
 
+RUN apt-get -q -y install libreoffice unoconv
+
 RUN mkdir -p /var/log/supervisor
 
 RUN echo "[supervisord] \n\

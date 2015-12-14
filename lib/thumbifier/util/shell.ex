@@ -40,4 +40,13 @@ defmodule Thumbifier.Util.Shell do
   def wkhtmltopdf(params) do
     apply(Sh, :wkhtmltopdf, params)
   end
+
+  @doc """
+  Call the unoconv command line function
+  """
+  def unoconv(params) do
+    apply(Sh, :unoconv, params)
+  end
+
+
 end

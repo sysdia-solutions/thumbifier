@@ -55,4 +55,31 @@ defmodule ConverterTest do
     assert File.exists?(output_path) == true
     File.rm(output_path)
   end
+
+  test "document - outputs a jpg from a source office document for the given page", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "doc.doc"
+    results = Thumbifier.Convert.Converter.from_document(file_path, 72, "100x100", "1")
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
+
+  test "spreadsheet - outputs a jpg from a source office spreadsheet for the given page", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "xls.xls"
+    results = Thumbifier.Convert.Converter.from_spreadsheet(file_path, 72, "100x100", "1")
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
+
+  test "presentation - outputs a jpg from a source office presentation for the given page", %{fixture_path: fixture_path} do
+    file_path = fixture_path <> "ppt.ppt"
+    results = Thumbifier.Convert.Converter.from_presentation(file_path, 72, "100x100", "1")
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
 end
