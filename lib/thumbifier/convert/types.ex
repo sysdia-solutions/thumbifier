@@ -4,6 +4,7 @@ defmodule Thumbifier.Convert.Types do
     ++ pdf
     ++ psd
     ++ video
+    ++ website
   end
 
   def is_supported?(type) do
@@ -24,6 +25,10 @@ defmodule Thumbifier.Convert.Types do
 
   def is_video?(type) do
     type in video
+  end
+
+  def is_website?(type) do
+    type in website
   end
 
   defp basic_image() do
@@ -74,6 +79,12 @@ defmodule Thumbifier.Convert.Types do
       "video/mpeg",
       "video/x-mpeg",
       "video/mp4"
+    ]
+  end
+
+  defp website() do
+    [
+      "website"
     ]
   end
 end

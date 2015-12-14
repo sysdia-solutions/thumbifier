@@ -72,6 +72,9 @@ defmodule Thumbifier.Convert.Processor do
       Thumbifier.Convert.Types.is_video?(mime_type) ->
         Thumbifier.Convert.Converter.from_video(source, data["quality"], data["dimensions"], data["frame"])
 
+      Thumbifier.Convert.Types.is_website?(mime_type) ->
+        Thumbifier.Convert.Converter.from_website(source, data["quality"], data["dimensions"])
+
       true ->
         {:error, "mime-type " <> mime_type <> " not supported"}
     end

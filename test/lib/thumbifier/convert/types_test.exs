@@ -35,6 +35,10 @@ defmodule TypesTest do
     assert Thumbifier.Convert.Types.is_psd?("application/psd") == true
   end
 
+  test "is_website?" do
+    assert Thumbifier.Convert.Types.is_website?("website") == true
+  end
+
   test "is_supported?" do
     assert Thumbifier.Convert.Types.is_supported?("image/photoshop") == true
     assert Thumbifier.Convert.Types.is_supported?("image/x-photoshop") == true
@@ -61,6 +65,7 @@ defmodule TypesTest do
     assert Thumbifier.Convert.Types.is_supported?("image/x-tif") == true
     assert Thumbifier.Convert.Types.is_supported?("image/tiff") == true
     assert Thumbifier.Convert.Types.is_supported?("image/x-tiff") == true
+    assert Thumbifier.Convert.Types.is_supported?("website") == true
   end
 
   test "all" do
@@ -96,7 +101,8 @@ defmodule TypesTest do
         "video/x-msvideo",
         "video/mpeg",
         "video/x-mpeg",
-        "video/mp4"
+        "video/mp4",
+        "website"
       ]
 
     assert Thumbifier.Convert.Types.all == expected

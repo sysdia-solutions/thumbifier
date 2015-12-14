@@ -46,4 +46,13 @@ defmodule ConverterTest do
     assert File.exists?(output_path) == true
     File.rm(output_path)
   end
+
+  test "website - outputs a jpg from a source website" do
+    file_path = "http://www.sysdia.com"
+    results = Thumbifier.Convert.Converter.from_website(file_path, 72, "100x100")
+    output_path = elem(results, 1)
+
+    assert File.exists?(output_path) == true
+    File.rm(output_path)
+  end
 end

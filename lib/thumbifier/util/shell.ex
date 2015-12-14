@@ -33,4 +33,11 @@ defmodule Thumbifier.Util.Shell do
   def ffmpeg(params) do
     apply(Sh, :ffmpeg, params)
   end
+
+  @doc """
+  Call the wkhtmltopdf command line function
+  """
+  def wkhtmltopdf(params) do
+    apply(Sh, :wkhtmltopdf, params)
+  end
 end

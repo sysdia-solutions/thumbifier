@@ -47,6 +47,24 @@ defmodule Thumbifier.Convert.Converter do
     jpg
   end
 
+  @doc """
+  Convert a Website to a jpg
+  """
+  def from_website(url, quality, size) do
+    output_dir =  System.tmp_dir! <> "/website-convert-" <> Ecto.UUID.generate <> "/"
+    File.mkdir(output_dir)
+    output_file = output_dir <> "website.pdf"
+
+    ["--disable-smart-shrinking", "--page-width", "508mm", "--page-height", "285mm", url, output_file]
+    |> Thumbifier.Util.Shell.wkhtmltopdf
+
+    jpg = from_pdf(output_file, quality, size, 1)
+
+    File.rm_rf(output_dir)
+
+    jpg
+  end
+
   defp resize_response(false, file, _quality, _size) do
     {:error, file <> " not found"}
   end

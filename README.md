@@ -26,6 +26,7 @@ The Thumbifier Engine requires the following:
 * PostgresSQL 9+ database
 * ImageMagick 6+
 * FFmpeg
+* WkHtmlToPdf
 
 ## Getting Started
 
