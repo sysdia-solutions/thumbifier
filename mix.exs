@@ -20,7 +20,8 @@ defmodule Thumbifier.Mixfile do
     [mod: {Thumbifier, []},
      applications: [:phoenix, :cowboy, :logger, :postgrex,
                     :poolboy, :httpoison, :mailman, :phoenix_html,
-                    :phoenix_ecto, :timex, :sh, :corsica]]
+                    :phoenix_ecto, :timex, :sh, :corsica,
+                    :logger_logentries_backend]]
   end
 
   # Specifies which paths to compile per environment
@@ -45,7 +46,9 @@ defmodule Thumbifier.Mixfile do
      {:httpoison, "~> 0.8"},
      {:mailman, "~> 0.2"},
      {:eiconv, github: "zotonic/eiconv"},
-     {:corsica, "~> 0.4.0"}]
+     {:corsica, "~> 0.4.0"},
+     {:logger_logentries_backend, "~> 0.0.1", only: :prod}
+     ]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

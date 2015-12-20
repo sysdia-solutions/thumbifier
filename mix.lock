@@ -18,6 +18,7 @@
   "hackney": {:hex, :hackney, "1.4.6"},
   "httpoison": {:hex, :httpoison, "0.8.0"},
   "idna": {:hex, :idna, "1.0.2"},
+  "logger_logentries_backend": {:hex, :logger_logentries_backend, "0.0.1"},
   "mailman": {:hex, :mailman, "0.2.1"},
   "meck": {:hex, :meck, "0.8.2"},
   "mimerl": {:hex, :mimerl, "1.0.0"},
